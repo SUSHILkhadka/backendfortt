@@ -1,4 +1,6 @@
 function gameloop(gamemode = 1, training = 0) {
+
+
     let gamebox = document.createElement("div")
     gamebox.style.position = 'relative';
     gamebox.style.backgroundColor = 'black'
@@ -22,10 +24,8 @@ function gameloop(gamemode = 1, training = 0) {
     let player2Name = localStorage.getItem('player2Name_TableTennis') ? localStorage.getItem('player2Name_TableTennis') : "Player2";
     let toWinScore = localStorage.getItem('toWinScore_TableTennis') ? localStorage.getItem('toWinScore_TableTennis') : 11;
     let changeServeOn = localStorage.getItem('changeServeOn') ? localStorage.getItem('changeServeOn') : 2;
-    timeScale=localStorage.getItem('timescale_TableTennis') ? localStorage.getItem('timescale_TableTennis') : 0.7;
+    timeScale = localStorage.getItem('timescale_TableTennis') ? localStorage.getItem('timescale_TableTennis') : 0.7;
 
-
-console.log(player1Name);
     if (gamemode == 2) {
         adjustXdependingOnGameMode = 0
         adjustYdependingOnGameMode = 0;
@@ -64,8 +64,7 @@ console.log(player1Name);
     let angx = 25;
     let angy2 = 0;
     let angx2 = 25;
-    let gameoverflag=0;
-
+    let gameoverflag = 0;
 
     //backbutton
     let backbutton = document.createElement('button')
@@ -74,42 +73,27 @@ console.log(player1Name);
     backbutton.style.top = '0px';
     backbutton.style.right = '0px';
     backbutton.addEventListener('click', function event(e) {
-        if(gameoverflag==0){
-            gameoverflag=1;
-        gamebox.innerHTML = '';
-        menu.style.display = 'block';
-        world = null;
-        ball = null;
-        bat = null;
-        bat_far = null;
-        return 0;
+        if (gameoverflag == 0) {
+            ambientsound.pause();
+            ambientsound.currentTime = 0;
+            gameoverflag = 1;
+            gamebox.innerHTML = '';
+            menu.style.display = 'block';
+            world = null;
+            ball = null;
+            bat = null;
+            bat_far = null;
+            return 0;
         }
     })
     gamebox.append(backbutton);
+    ambientsound.play();
+    ambientsound.loop = true;
 
 
     //scoreboard
-    let scoreboard = document.createElement('div');
-    let name1 = document.createElement('h3')
-    name1.innerHTML = `${player1Name}`
-    let name2 = document.createElement('h3')
-    name2.innerHTML = `${player2Name}`
-    let score1 = document.createElement('h2');
-    let score2 = document.createElement('h2');
-    let serveflag = document.createElement('h2');
-
-
-    scoreboard.append(name1);
-    scoreboard.append(score1);
-    scoreboard.append(name2);
-    scoreboard.append(score2);
-    scoreboard.append(serveflag);
-    scoreboard.style.background = 'transparent'
-    scoreboard.style.position = "absolute";
-    scoreboard.style.zIndex = "1"
-    scoreboard.style.top = '0px';
-    scoreboard.style.left = '0px';
-    gamebox.append(scoreboard);
+    let scoreboard = new Scoreboard(player1Name, player2Name);
+    gamebox.append(scoreboard.getDiv());
 
     bat.addMouseController();
     if (training == 1) {
@@ -177,166 +161,163 @@ console.log(player1Name);
     });
 
 
-    let startime=Date.now();
+    let startime = Date.now();
 
     function play() {
 
-if(gameoverflag==0){
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#87ceeb'
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.strokeRect(0, 0, canvas.width, canvas.height);
+        if (gameoverflag == 0) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#87ceeb'
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
-        if (bat.score >= toWinScore || bat_far.score >= toWinScore) {
-            if(gameoverflag==0){
-                gameoverflag=1;
-            let winner=player1Name;
+            if (bat.score >= toWinScore || bat_far.score >= toWinScore) {
+                if (gameoverflag == 0) {
+                    gameoverflag = 1;
+                    let winner = player1Name;
 
-            let finishtime=Date.now();
-            console.log("finishtime=",finishtime)
+                    let finishtime = Date.now();
+                    let timetaken = Math.floor((finishtime - startime) / 1000);
+                    if (bat.score >= toWinScore) {
+                        winner = player1Name;
+                        highscoreHandler(timetaken, player1Name)
+                    }
+                    else {
+                        winner = player2Name;
+                        highscoreHandler(timetaken, player2Name)
+                    }
 
-            let timetaken=Math.floor((finishtime-startime)/1000);
-            console.log("timetaken in sec=",timetaken)
+                    let winnerbox = document.createElement('div');
+                    winnerbox.style.position = 'absolute';
+                    winnerbox.style.top = toPx(CANVAS_HEIGHT / 2);
+                    winnerbox.style.left = toPx(CANVAS_WIDTH / 2.2);
+                    let greet = document.createElement('p');
+                    greet.innerHTML = `${winner}  WON!!!!`;
+                    winnerbox.append(greet);
+                    gamebox.append(winnerbox);
 
-
-            if (bat.score >= toWinScore) {
-                console.log(`${player1Name} won`)
-                winner=player1Name;
-            highscoreHandler(timetaken,player1Name)
-
+                    setTimeout(function () {
+                        ambientsound.pause();
+                        ambientsound.currentTime = 0;
+                        gamebox.innerHTML = '';
+                        menu.style.display = 'block';
+                        world = null;
+                        ball = null;
+                        bat = null;
+                        bat_far = null;
+                        return 0;
+                    }, 2000)
+                }
 
             }
-            else {
-                console.log(`${player2Name} won`)
-                winner=player2Name;
-            highscoreHandler(timetaken,player2Name)
-
-            }
-
-            scoreboard.style.display='none';
-
-            let winnerbox=document.createElement('div');
-            winnerbox.style.position='absolute';
-            winnerbox.style.top=toPx(CANVAS_HEIGHT/2);
-            winnerbox.style.left=toPx(CANVAS_WIDTH/2.2);
-            winnerbox.style.zIndex=3;
-            let greet=document.createElement('p');
-            greet.innerHTML=`${winner} WON`;
-            winnerbox.append(greet);
-            gamebox.append(winnerbox);
-
-            setTimeout(function(){
-                gamebox.innerHTML = '';
-                menu.style.display = 'block';
-                world = null;
-                ball = null;
-                bat = null;
-                bat_far = null;
-                return 0;
-            },2000)
-        }
-
-        }
-    
-
-        bat.updateAngle(angy);
-        bat_far.updateAngle(angy2);
-        let bat_farMirror = new Bat();
-        bat_farMirror.new(bat_far.topLeft, bat_far.topRight, bat_far.bottomLeft, bat_far.bottomRight)
-        bat_farMirror.reflection();
-        ball.collisionWorld();
-        ball.updatePosition();
-        ball.collisionTable(bat, bat_far);
-        if (training == 1) {
-            ball.dontGoOutside();
-        }
-
-        if (freeze == 0) {
-            ball.collisionBat2(angy, angy2, bat, bat_far);
-            bat.updatePosition();
-            bat_far.updatePosition();
-        }
-        //bot tracking movements both x and y:
-        if (gamemode == 1 && freeze == 0 && training == 0) {
-            bat_far.trackBall(ball);
-            bat_far.adjustRange(ball);
-        }
-
-        ctx.translate(translateX + adjustXdependingOnGameMode, translateY + adjustYdependingOnGameMode);
-        if (angy < 14) {
-            world.drawWallRight(ctx, angy, angx);
-        }
-        if (angy > -14) {
-            world.drawWallLeft(ctx, angy, angx);
-        }
-        world.drawWorld(ctx, angy, angx);
-
-        table.drawAll(ctx, angy, angx);
-        ball.drawAll(ctx, angy, angx);
-        if (training == 0) {
-            bat_farMirror.drawBat3D(ctx, angy, angx);
-        }
-        bat.drawBat3D(ctx, angy, angx);
 
 
-        //score
-        score1.innerHTML = `${bat.score}`
-        score2.innerHTML = `${bat_far.score}`
-        serveflag.innerHTML = `downside collision flag=${ball.downside_collision_flag},upsidecollision flag = ${ball.upside_collision_flag},freeze=${freeze}`
-        if (freeze == 0 && training == 0) {
-            updateScore2(ball, bat, bat_far);
-        }
-
-        ball.serverid = serveDeterminer(bat.score, bat_far.score, ball.serverid, changeServeOn);
-        if (gamemode == 1) {
-            ball.serverid = 1
-        }
-        ctx.translate(-translateX - adjustXdependingOnGameMode, -translateY - adjustYdependingOnGameMode);
-
-
-        //next bat calculation
-        let ballMirror = new Ball();
-        ballMirror.new(ball.centre, ball.rad, ball.velocity, ball.upside_collision_flag, ball.downside_collision_flag, ball.serveflag, ball.lastCollidedBat)
-        ballMirror.reflection();
-        let batMirror = new Bat();
-        batMirror.new(bat.topLeft, bat.topRight, bat.bottomLeft, bat.bottomRight)
-        batMirror.reflection();
-        if (freeze == 0) {
-            ballMirror.collisionBat2(angy, angy2, bat_far, bat, false);
-            ball.velocity = ballMirror.velocity;
-            ball.serveflag = ballMirror.serveflag;
+            bat.updateAngle(angy);
             bat_far.updateAngle(angy2);
-            bat_far.updatePosition();
+            let bat_farMirror = new Bat();
+            bat_farMirror.new(bat_far.topLeft, bat_far.topRight, bat_far.bottomLeft, bat_far.bottomRight)
+            bat_farMirror.reflection();
+            ball.collisionWorld();
+            ball.updatePosition();
+            ball.collisionTable(bat, bat_far);
+            if(training==0){
+            ball.collisionNet(ctx, angy, angx);
+            }   
+            if (training == 1) {
+                ball.dontGoOutside();
+            }
+
+            if (freeze == 0) {
+                ball.collisionBat2(angy, angy2, bat, bat_far);
+                bat.updatePosition();
+                bat_far.updatePosition();
+            }
+            //bot tracking movements both x and y:
+            if (gamemode == 1 && freeze == 0 && training == 0) {
+                bat_far.trackBall(ball);
+                bat_far.adjustRange(ball);
+            }
+
+            ctx.translate(translateX + adjustXdependingOnGameMode, translateY + adjustYdependingOnGameMode);
+        // ctx.globalAlpha = 0.4;
+            if (angy < 14) {
+                world.drawWallRight(ctx, angy, angx);
+            }
+            if (angy > -14) {
+                world.drawWallLeft(ctx, angy, angx);
+            }
+            world.drawWorld(ctx, angy, angx);
+        // ctx.globalAlpha = 1;
+
+            table.drawAll(ctx,angy,angx);
+                ball.drawAll(ctx, angy, angx);
+                table.drawNet(ctx, angy, angx)
+
+            if (training == 0) {
+                bat_farMirror.drawBat3D(ctx, angy, angx);
+            }
+            table.drawNet(ctx, angy, angx)
+            ball.drawAll(ctx, angy, angx);
+            bat.drawBat3D(ctx, angy, angx);
+
+            //score
+            scoreboard.updateScore(bat.score, bat_far.score);
+
+            if (freeze == 0 && training == 0) {
+                updateScore2(ball, bat, bat_far);
+            }
+            ball.serverid = serveDeterminer(bat.score, bat_far.score, ball.serverid, changeServeOn);
+            if (gamemode == 1) {
+                ball.serverid = 1
+            }
+            ctx.translate(-translateX - adjustXdependingOnGameMode, -translateY - adjustYdependingOnGameMode);
+
+
+            //next bat calculation
+            let ballMirror = new Ball();
+            ballMirror.new(ball.centre, ball.rad, ball.velocity, ball.upside_collision_flag, ball.downside_collision_flag, ball.serveflag, ball.lastCollidedBat)
+            ballMirror.reflection();
+            let batMirror = new Bat();
+            batMirror.new(bat.topLeft, bat.topRight, bat.bottomLeft, bat.bottomRight)
+            batMirror.reflection();
+            if (freeze == 0) {
+                ballMirror.collisionBat2(angy, angy2, bat_far, bat, false);
+                ball.velocity = ballMirror.velocity;
+                ball.centre.y=ballMirror.centre.y
+                ball.serveflag = ballMirror.serveflag;
+                bat_far.updateAngle(angy2);
+                bat_far.updatePosition();
+            }
+
+
+            ctx2.clearRect(0, 0, canvas.width, canvas.height);
+            //next bat draw
+            if (gamemode == 2) {
+                ctx2.strokeRect(0, 0, canvas.width, canvas.height);
+                ctx2.translate(translateX, translateY);
+                let world2 = new World();
+                if (angy2 < 15) {
+                    world2.drawWallRight(ctx2, angy2, angx2);
+                }
+                if (angy2 > -14) {
+                    world2.drawWallLeft(ctx2, angy2, angx2);
+                }
+                world2.drawWorld(ctx2, angy2, angx2);
+                table.drawAll(ctx2, angy2, angx2);
+                batMirror.drawBat3D(ctx2, angy2, angx2);
+                table.drawNet(ctx2,angy2,angx2);
+                ballMirror.drawAll(ctx2, angy2, angx2);
+                bat_far.drawBat3D(ctx2, angy2, angx2);
+                ctx2.translate(-translateX, -translateY);
+            }
+
+
+            requestAnimationFrame(play);
         }
 
 
-        ctx2.clearRect(0, 0, canvas.width, canvas.height);
-        //next bat draw
-        if (gamemode == 2) {
-            ctx2.strokeRect(0, 0, canvas.width, canvas.height);
-            ctx2.translate(translateX, translateY);
-            let world2 = new World();
-            if (angy2 < 15) {
-                world2.drawWallRight(ctx2, angy2, angx2);
-            }
-            if (angy2 > -14) {
-                world2.drawWallLeft(ctx2, angy2, angx2);
-            }
-            world2.drawWorld(ctx2, angy2, angx2);
-            table.drawAll(ctx2, angy2, angx2);
-            ballMirror.drawAll(ctx2, angy2, angx2);
-            batMirror.drawBat3D(ctx2, angy2, angx2);
-            bat_far.drawBat3D(ctx2, angy2, angx2);
-            ctx2.translate(-translateX, -translateY);
-        }
-
-        
-        requestAnimationFrame(play);
-        }   
-
-        
-}
-play();
+    }
+    play();
 
 
     imageObj.onload = function () {
@@ -377,8 +358,8 @@ play();
 /**
  * 
  * @param {*} ball used for upside collision count, downside collision count, and other flags
- * @param {*} bat for updating score
- * @param {*} bat_far for updating score
+ * @param {*} bat for updating score of player first
+ * @param {*} bat_far for updating score of player second 
  */
 
 function updateScore2(ball, bat, bat_far) {
@@ -389,24 +370,20 @@ function updateScore2(ball, bat, bat_far) {
                 if (ball.downside_collision_flag - ball.upside_collision_flag == 0) {
                     bat.score++;
                     ball.startServe();
-
                 }
                 else if (ball.downside_collision_flag > ball.upside_collision_flag) {
                     bat_far.score++
                     ball.startServe();
-
                 }
             }
             else {
                 if (ball.upside_collision_flag - ball.downside_collision_flag == 0) {
                     bat_far.score++;
                     ball.startServe();
-
                 }
                 else if (ball.upside_collision_flag > ball.downside_collision_flag) {
                     bat.score++;
                     ball.startServe();
-
                 }
             }
 

@@ -116,7 +116,6 @@ class Bat {
         }.bind(this));
 
     }
-
     //update position of bat in 3D coordinate system as per mouse movement or keyboard event.
     updatePosition(x = nomouse, y = nomouse, tilt_angle = 0) {
         if (x == nomouse && y == nomouse) {
@@ -125,12 +124,14 @@ class Bat {
             this.x = x;
             this.y = y;
 
-            this.point3D.z = ((this.y) * (-(START_BOARD_z + BOARD_LENGTH) + 0.5) / (CANVAS_WIDTH - 0)) + 1.6;
+            // this.point3D.z = ((this.y) * (-(START_BOARD_z + BOARD_LENGTH) + 0.5) / (CANVAS_WIDTH - 0)) + 1.6;
+            this.point3D.z = ((this.y) * (-(START_BOARD_z + BOARD_LENGTH) + 0.5) / (CANVAS_WIDTH - 0)) + (START_BOARD_z+BOARD_LENGTH/2);
+
             if (this.point3D.z > (START_BOARD_z + BOARD_LENGTH / 2)) {
                 this.point3D.z = START_BOARD_z + BOARD_LENGTH / 2
             }
             this.point3D.x = ((this.x) * (1.6) / (CANVAS_WIDTH - 0)) + 0;
-            this.point3D.y = -NET_HEIGHT * 3.5;
+            this.point3D.y = -NET_HEIGHT * 2.5;
         }
     }
 
@@ -209,9 +210,13 @@ class Bat {
     }
     //for bot maintaining distance in z axis
     adjustRange(ball) {
-        this.point3D.z = START_BOARD_z;
-        if(Math.random<1){
-        this.point3D.z = START_BOARD_z+0.1*Math.random();
+        if(ball.centre.z<START_BOARD_z+BOARD_LENGTH/2){
+        this.point3D.z = START_BOARD_z-0.1;
+        }
+        if(ball.centre.z>START_BOARD_z+BOARD_LENGTH/2){
+        this.point3D.z +=0.1/60
+
+
 
         }
     }

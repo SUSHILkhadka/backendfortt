@@ -11,7 +11,7 @@ async function highscorepage() {
         let namediv = document.createElement('h2');
         let timediv = document.createElement('p');
         namediv.innerHTML = `${list[i]['name']}`;
-        timediv.innerHTML = `${list[i]['timetaken']}`;
+        timediv.innerHTML = `${list[i]['timetaken']} seconds`;
 
         scorediv.append(namediv);
         scorediv.append(timediv);
@@ -20,22 +20,12 @@ async function highscorepage() {
 
     }
 
-    let backbutton = document.createElement('button')
-    backbutton.innerHTML = 'back';
-    // backbutton.style.position = 're';
-    // backbutton.style.top = '0px';
-    // backbutton.style.right = '0px';
-    backbutton.addEventListener('click', function event(e) {
-        highscore_container.innerHTML = '';
-        menu.style.display = 'block';
-        return 0;
-    })
-    highscore_container.append(backbutton);
+    let back=new Backbutton(highscore_container,menu,'back','relative');
+    let  backdiv=back.getDiv();
+    highscore_container.append(backdiv)
 
 }
 
-var fetchedData = [];
-var totalnumber = 0;
 async function bringHighscoreList() {
     const response = await fetch("http://localhost:3000/api/fetch")
 
@@ -50,7 +40,7 @@ async function bringHighscoreList() {
 }
 
 
-const maxlength = 3;
+const maxlength = 5;
 async function highscoreHandler(finishtime, name) {
     let list = await bringHighscoreList();
 

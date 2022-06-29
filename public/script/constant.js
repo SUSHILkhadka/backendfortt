@@ -30,8 +30,12 @@ START_ZPLANE=2
 //camera capped at in degree with Y , X and near and far distance capped by min and max.
 const RESTRICTION_START_ZPLANE_min= 1
 const RESTRICTION_START_ZPLANE_max= 4
-const RESTRICTION_ANGLE_Y= 50
-const RESTRICTION_ANGLE_X= 55
+// const RESTRICTION_ANGLE_Y= 50
+const RESTRICTION_ANGLE_Y= 180
+
+// const RESTRICTION_ANGLE_X= 55
+const RESTRICTION_ANGLE_X= 180
+
 
 
 //camera 
@@ -60,12 +64,12 @@ const START_BOARD_y=0;
 const START_BOARD_z=1 ;
 
 //far width=0, right=1,left=1,near width=4,top=3
-const TABLE_COLOR=["rgba(31, 199, 31, 01)","rgb(0, 0, 102)","rgba(124, 69, 73, 0.8)","rgba(0, 0, 255, 1)",'black']
+const TABLE_COLOR=["rgba(31, 199, 31, 01)","rgb(0, 0, 102)","rgba(124, 69, 73, 0.8)","#0000FF",'black']
 
 const LEG_COLOR=["rgba(31, 199, 31, 01)","rgb(153, 51, 0)","rgba(124, 69, 73, 0.8)","rgb(153, 51, 0)",'rgb(153, 51, 0)']
 
-const LIGHT_COLOR=["rgba(31, 199, 31, 01)","rgb(0, 0, 102)","rgba(124, 69, 73, 0.8)","white",'black']
-
+// const LIGHT_COLOR=["rgba(31, 199, 31, 01)","rgb(0, 0, 102)","rgba(124, 69, 73, 0.8)","white",'black']
+const LIGHT_COLOR=["white","white","white","white","white","white","white"]
 //leg
 const LEG_WIDTH_OFFSET=0.08
 const LEG_HEIGHT=GROUND_START_y-(START_BOARD_y+BOARD_HEIGHT)
@@ -82,12 +86,19 @@ const LEG_LENGTH=BOARD_LENGTH-2*LEG_LENGTH_OFFSET;
 const MID_LINE_WIDTH=0.01
 
 const NET_WIDHT=BOARD_WIDTH+0.05
-const NET_HEIGHT=0.05
+const NET_HEIGHT=0.06
+// const NET_HEIGHT=0.1
+
+
+
 const START_NET_x=START_BOARD_x-(NET_WIDHT-BOARD_WIDTH)/2
 const START_NET_y=START_BOARD_y-NET_HEIGHT
 const START_NET_z=START_BOARD_z+(BOARD_LENGTH/2)
 const START_LEG_xr=START_BOARD_x+BOARD_WIDTH-10
 
+// const NET_COLLISION_THRESHOLD_Z=0.02
+const NET_COLLISION_THRESHOLD_Y=NET_HEIGHT/1.3
+const NET_COLLISION_LOSS=0.6
 
 //bat
 //for actual 3d 
@@ -101,17 +112,15 @@ const BAT_HEIGHT_2d=80*2
 const BAT_LENGTH_2d=1
 
 
-
-
 //ball
 const BALL_RADIUS_2D=20
 const BALL_RADIUS=5
 
-BALL_COLOR=["rgba(255, 177, 0, 0.1)","rgb(230, 138, 0,1)","rgb(255,255,255,1)"]
+const BALL_COLOR=["rgba(255, 177, 0, 0.1)","#E68A00","rgb(255,255,255,1)"]
 // BALL_STROKE_COLOR=['rgb(51, 31, 0,1)']
-BALL_STROKE_COLOR=['rgb(255, 0, 0,1)']
+const BALL_STROKE_COLOR=['rgb(255, 0, 0,1)']
 
-SHADOW_COLOR=["rgba(0, 0, 0, 0.8)"]
+const SHADOW_COLOR=["rgba(0, 0, 0, 0.8)"]
 
 const STARTING_BALL_POSITION_Y=-0.1
 const STARTING_BALL_VELOCITY_Y=0.001
@@ -129,6 +138,8 @@ const SERVEDOWN_z=START_BOARD_z+BOARD_LENGTH/10
 
 //physics constant
 const GRAVITY=0.00128
+// const GRAVITY=0.01
+
 
 const FLOORSTART_Y=800
 const LOSS_TABLE=0.00
@@ -147,20 +158,22 @@ const thresholdZ=0.3;
 const COLLISION_DETECTION_LIMIT=400
 
 
-//strike back or collision response constants
-const RESPONSE_SCALE_ZtoX=10;
-const RESPONSE_SCALE_Z=0.0002;
-const RESPONSE_SCALE_X=0.00001;
 
-const STABLE_Y_VELOCITY=0.00015;
-const SHOT_POSITION_Y=-0.15
+//strike back or collision response constants
+// const RESPONSE_SCALE_ZtoX=10;
+const RESPONSE_SCALE_Z=0.0002;
+const RESPONSE_SCALE_X=0.00003;
+
+const STABLE_Y_VELOCITY=0.00019;
+const SHOT_POSITION_Y=-0.17
 const BAT_LENGTHINZAXIS_FOR_SHOT=0.4
 
 
 // global variables
+let ambientsound = new Audio('asset/ambient.mp3');
 let bounche = new Audio('asset/bounche.m4a');
 let batsound = new Audio('asset/bat.m4a');
-let wallsound = new Audio('asset/wall.wav');
+let wallsound = new Audio('asset/wallbounce.mp3');
 let batsound2 = new Audio('asset/balls.wav');
 let refreesound=new Audio('asset/refree.m4a');
 let soundflag=1

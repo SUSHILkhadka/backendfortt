@@ -30,23 +30,12 @@ function controlpage() {
     let bothplayer = document.createElement("p");
     bothplayer.innerHTML = "O and P for zooming in and out camera"
 
-
-
-    let backbutton = document.createElement('button')
-    backbutton.innerHTML = 'back';
-    backbutton.style.position = 'absolute';
-    backbutton.style.top = '0px';
-    backbutton.style.right = '0px';
-    backbutton.addEventListener('click', function event(e) {
-        page.innerHTML = '';
-        menu.style.display = 'block';
-        return 0;
-    })
-
     page.append(firstplayer);
     page.append(secondplayer);
     page.append(bothplayer);
-    page.append(backbutton);
+    let back=new Backbutton(page,menu,'back');
+    let  backdiv=back.getDiv();
+    page.append(backdiv)
     document.body.append(page);
 
 

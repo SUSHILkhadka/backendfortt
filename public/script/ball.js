@@ -161,6 +161,20 @@ collisionTable( ) {
         }
     }
 
+    collisionNet(ctx,a1,a2){
+        if(this.centre.x>=START_BOARD_x && this.centre.x<=(START_BOARD_x+BOARD_WIDTH)){
+            if(Math.abs(this.centre.z-(START_BOARD_z+(BOARD_LENGTH/2)))<=2.5*this.rad){
+            // console.log('net collide');
+                if(this.centre.y<=START_BOARD_y && (this.centre.y+this.rad)>=START_BOARD_y-NET_HEIGHT){
+                        this.velocity.z=-this.velocity.z*NET_COLLISION_LOSS
+
+
+                }
+            }
+        }
+
+    }
+
 
     //this function is used to testing. This bounds ball within table. Used to fine tuning collision response.
 
@@ -286,8 +300,11 @@ collisionTable( ) {
                         this.centre.y = SHOT_POSITION_Y;
                         this.velocity.y = STABLE_Y_VELOCITY;
 
-                        this.velocity.x+=-angley*0.001*Math.abs(this.velocity.z);
+                        console.log('before angle response',this.velocity.x)
+                        this.velocity.x=(Math.sin(angley)*Math.sin(angley)*-this.velocity.x+Math.cos(angley)*Math.cos(angley)*Math.abs(this.velocity.z)*(-angley/(Math.abs(angley)+1.1)))/4;
+                        console.log('after angle response',this.velocity.x)
                         this.velocity.x += RESPONSE_SCALE_X * bat.speedX;
+                        console.log('after speed response',this.velocity.x)
 
                         this.velocity.z = Math.abs(this.velocity.z) * 0.8 - RESPONSE_SCALE_Z * bat.speedY - 0.001;
                         if (this.serveflag != 0) {
@@ -313,21 +330,18 @@ collisionTable( ) {
 
                         this.centre.y = SHOT_POSITION_Y
                         this.velocity.y = STABLE_Y_VELOCITY;
-
-                        this.velocity.x+=angley2*0.001*Math.abs(this.velocity.z);
+                        this.velocity.x=(Math.sin(angley)*Math.sin(angley)*-this.velocity.x+Math.cos(angley)*Math.cos(angley)*Math.abs(this.velocity.z)*(-angley/(Math.abs(angley)+1.1)))/4;
                         this.velocity.x += RESPONSE_SCALE_X * bat.speedX;
-
                         this.velocity.z = -Math.abs(this.velocity.z) - RESPONSE_SCALE_Z * bat.speedY;
-                        this.velocity.x += RESPONSE_SCALE_X * bat.speedX;
                         if (this.serveflag != 0) {
-                            this.velocity.z = -0.03
+                            this.velocity.z = -0.025
                             this.serveflag = 0;
                         }
                         else {
-                            this.velocity.z = -0.08
+                            this.velocity.z = -0.07
+
                         }
                         this.lastCollidedBat=2;
-                        // this.velocity.z=-0.1
                     }
                     setTimeout(function () {
                         soundflag = 1;

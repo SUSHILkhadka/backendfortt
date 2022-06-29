@@ -13,7 +13,6 @@ class Table{
     this.drawLegs(ctx,angley,anglex)
     this.drawTable(ctx,angley,anglex)
     this.drawMidline(ctx,angley,anglex)
-    this.drawNet(ctx,angley,anglex)
 
     }
 

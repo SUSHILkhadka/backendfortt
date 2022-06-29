@@ -52,7 +52,7 @@ class World{
         let cp=project(c,angley,anglex);
         let dp=project(d,angley,anglex);
 
-        drawPolygon(ctx,"grey","black",ap,bp,cp,dp);
+        drawPolygon(ctx,"#71797E","black",ap,bp,cp,dp);
     }
 
     //draws Left wall as polygon surface
@@ -65,7 +65,7 @@ class World{
         let bp=project(b,angley,anglex);
         let cp=project(c,angley,anglex);
         let dp=project(d,angley,anglex);
-        drawPolygon(ctx,'red',"black",ap,bp,cp,dp);
+        drawPolygon(ctx,'#315399',"black",ap,bp,cp,dp);
     }
 
     //draws Right wall as polygon surface

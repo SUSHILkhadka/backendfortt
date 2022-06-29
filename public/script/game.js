@@ -26,6 +26,10 @@ function gameloop(gamemode = 1, training = 0) {
     let changeServeOn = localStorage.getItem('changeServeOn') ? localStorage.getItem('changeServeOn') : 2;
     timeScale = localStorage.getItem('timescale_TableTennis') ? localStorage.getItem('timescale_TableTennis') : 0.7;
 
+    let alpha1=0.8
+    let alpha2=0.7
+    let alpha3=1
+
     if (gamemode == 2) {
         adjustXdependingOnGameMode = 0
         adjustYdependingOnGameMode = 0;
@@ -35,10 +39,14 @@ function gameloop(gamemode = 1, training = 0) {
         WIDTH_SCALE_FOR_PROJECTION = 2;
         HEIGHT_SCALE_FOR_PROJECTION = 2;
 
-        ballradiusfactor = 2.2
+        ballradiusfactor = 2.5
         shadowradiusfactor = 6000
 
         START_ZPLANE = 1.5
+
+         alpha1=0.8
+         alpha2=0.9
+         alpha3=1
 
         canvas.width = CANVAS_WIDTH / canvasWidthDividerForMultiplayer;
         canvas.height = CANVAS_HEIGHT / canvasHeightDividerForMultiplayer;
@@ -220,9 +228,9 @@ function gameloop(gamemode = 1, training = 0) {
             ball.collisionWorld();
             ball.updatePosition();
             ball.collisionTable(bat, bat_far);
-            if(training==0){
-            ball.collisionNet(ctx, angy, angx);
-            }   
+            if (training == 0) {
+                ball.collisionNet(ctx, angy, angx);
+            }
             if (training == 1) {
                 ball.dontGoOutside();
             }
@@ -239,7 +247,7 @@ function gameloop(gamemode = 1, training = 0) {
             }
 
             ctx.translate(translateX + adjustXdependingOnGameMode, translateY + adjustYdependingOnGameMode);
-        // ctx.globalAlpha = 0.4;
+            ctx.globalAlpha = alpha1;
             if (angy < 14) {
                 world.drawWallRight(ctx, angy, angx);
             }
@@ -247,18 +255,18 @@ function gameloop(gamemode = 1, training = 0) {
                 world.drawWallLeft(ctx, angy, angx);
             }
             world.drawWorld(ctx, angy, angx);
-        // ctx.globalAlpha = 1;
+            table.drawAll(ctx, angy, angx);
 
-            table.drawAll(ctx,angy,angx);
-                ball.drawAll(ctx, angy, angx);
-                table.drawNet(ctx, angy, angx)
-
+            ctx.globalAlpha = alpha2;
             if (training == 0) {
                 bat_farMirror.drawBat3D(ctx, angy, angx);
             }
             table.drawNet(ctx, angy, angx)
-            ball.drawAll(ctx, angy, angx);
             bat.drawBat3D(ctx, angy, angx);
+            ctx.globalAlpha = alpha3;
+            ball.drawAll(ctx, angy, angx);
+
+
 
             //score
             scoreboard.updateScore(bat.score, bat_far.score);
@@ -283,7 +291,7 @@ function gameloop(gamemode = 1, training = 0) {
             if (freeze == 0) {
                 ballMirror.collisionBat2(angy, angy2, bat_far, bat, false);
                 ball.velocity = ballMirror.velocity;
-                ball.centre.y=ballMirror.centre.y
+                ball.centre.y = ballMirror.centre.y
                 ball.serveflag = ballMirror.serveflag;
                 bat_far.updateAngle(angy2);
                 bat_far.updatePosition();
@@ -296,6 +304,7 @@ function gameloop(gamemode = 1, training = 0) {
                 ctx2.strokeRect(0, 0, canvas.width, canvas.height);
                 ctx2.translate(translateX, translateY);
                 let world2 = new World();
+                ctx2.globalAlpha = alpha1;
                 if (angy2 < 15) {
                     world2.drawWallRight(ctx2, angy2, angx2);
                 }
@@ -304,10 +313,15 @@ function gameloop(gamemode = 1, training = 0) {
                 }
                 world2.drawWorld(ctx2, angy2, angx2);
                 table.drawAll(ctx2, angy2, angx2);
+
+                ctx2.globalAlpha=alpha2;
                 batMirror.drawBat3D(ctx2, angy2, angx2);
-                table.drawNet(ctx2,angy2,angx2);
-                ballMirror.drawAll(ctx2, angy2, angx2);
+                table.drawNet(ctx2, angy2, angx2);
                 bat_far.drawBat3D(ctx2, angy2, angx2);
+
+                ctx2.globalAlpha = alpha3;
+                ballMirror.drawAll(ctx2, angy2, angx2);
+
                 ctx2.translate(-translateX, -translateY);
             }
 

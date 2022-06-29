@@ -10,9 +10,11 @@ class Table{
     }
 
     drawAll(ctx,angley,anglex){
+
     this.drawLegs(ctx,angley,anglex)
     this.drawTable(ctx,angley,anglex)
     this.drawMidline(ctx,angley,anglex)
+
 
     }
 

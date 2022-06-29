@@ -5,7 +5,7 @@ function controlpage() {
 
     let firstplayer = document.createElement("div")
     let name1 = document.createElement("h1")
-    name1.innerHTML = "player1";
+    name1.innerHTML = "PLAYER1";
     let mouseDescription = document.createElement("p");
     mouseDescription.innerHTML = 'Move mouse for moving bat'
     let cam1Description = document.createElement("p");
@@ -17,7 +17,7 @@ function controlpage() {
 
     let secondplayer = document.createElement("div")
     let name2 = document.createElement("h1")
-    name2.innerHTML = "player2";
+    name2.innerHTML = "PLAYER2";
     let keyboardDescription = document.createElement("p");
     keyboardDescription.innerHTML = 'Arrow keys for moving bat'
     let cam2Description = document.createElement("p");

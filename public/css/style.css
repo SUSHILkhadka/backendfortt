@@ -82,6 +82,9 @@ div p{
     border-radius: 2rem;
 
 }
+.menu{
+    display: none;
+}
 
 
 .settingpage{

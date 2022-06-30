@@ -1,3 +1,4 @@
+// function menu(){
 const menu=document.querySelector('.menu')
 const singleplayer=document.querySelector('.singleplayer')
 const multiplayer=document.querySelector('.multiplayer')
@@ -33,3 +34,4 @@ highscore.addEventListener('click',function event(e){
     menu.style.display='none';
     highscorepage();
 })
+// }

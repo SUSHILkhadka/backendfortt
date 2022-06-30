@@ -30,6 +30,10 @@ function gameloop(gamemode = 1, training = 0) {
     let alpha2=0.7
     let alpha3=1
 
+    pattern = ctx.createPattern(imageObj, 'repeat');
+texturepattern = ctx.createPattern(texture, 'repeat');
+netpattern = ctx.createPattern(imageObj2, 'repeat');
+floorpattern = ctx.createPattern(imageObj3, 'repeat');
     if (gamemode == 2) {
         adjustXdependingOnGameMode = 0
         adjustYdependingOnGameMode = 0;
@@ -332,37 +336,6 @@ function gameloop(gamemode = 1, training = 0) {
 
     }
     play();
-
-
-    imageObj.onload = function () {
-        pattern = ctx.createPattern(imageObj, 'repeat');
-    };
-    texture.onload = function () {
-        texturepattern = ctx.createPattern(texture, 'repeat');
-        ctx.drawImage(texture, 0, 0);
-        ctx.beginPath();
-        ctx.moveTo(30, 96);
-        ctx.lineTo(70, 66);
-        ctx.lineTo(103, 76);
-        ctx.lineTo(170, 15);
-        ctx.stroke();
-    };
-    imageObj2.onload = function () {
-        netpattern = ctx.createPattern(imageObj2, 'repeat');
-
-    };
-    imageObj3.onload = function () {
-        floorpattern = ctx.createPattern(imageObj3, 'repeat');
-    };
-    batimage.src = "./asset/bat.png";
-    texture.src = "./asset/walltexture1.png";
-    imageObj.src = "asset/wall.png";
-    imageObj2.src = "../asset/net.png";
-    imageObj3.src = "asset/floor.jpg";
-    ctx.mozImageSmoothingEnabled = false;
-    ctx.webkitImageSmoothingEnabled = false;
-    ctx.msImageSmoothingEnabled = false;
-    ctx.imageSmoothingEnabled = false;
 
 }
 

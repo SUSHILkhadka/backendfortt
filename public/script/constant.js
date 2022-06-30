@@ -178,7 +178,6 @@ let batsound2 = new Audio('asset/balls.wav');
 let refreesound=new Audio('asset/refree.m4a');
 let soundflag=1
 
-
 let batimage=new Image();
 
 var imageObj = new Image();

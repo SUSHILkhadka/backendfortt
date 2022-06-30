@@ -339,7 +339,6 @@ function gameloop(gamemode = 1, training = 0) {
 
     }
     play();
-
 }
 
 

@@ -26,24 +26,6 @@ class Bat {
         this.keyboardClientY = 300;
     }
 
-
-
-    //draws as per accurate cursor position
-    // drawBat(ctx) {
-    //     let topLeft1 = new Point3D(this.x, this.y, this.z);
-    //     let topRight1 = new Point3D(this.x + BAT_WIDTH_2d, this.y, this.z);
-    //     let bottomRight1 = new Point3D(this.x + BAT_WIDTH_2d, this.y + BAT_HEIGHT_2d, this.z);
-    //     let bottomLeft1 = new Point3D(this.x, this.y + BAT_HEIGHT_2d, this.z);
-    //     let a_proj = project(topLeft1);
-    //     let b_proj = project(topRight1);
-    //     let c_proj = project(bottomRight1);
-    //     let d_proj = project(bottomLeft1);
-    //     // drawPolygon(ctx,'white',a_proj,b_proj,c_proj,d_proj);
-    //     drawPolygon(ctx, 'white', topLeft1, topRight1, bottomRight1, bottomLeft1);
-    // }
-
-
-
     //draws bat as mouse in (x,y) is projected to (x,z) for 3D.
     drawBat3D(ctx, angley, anglex) {
         let a_proj = project(this.topLeft, angley, anglex);
@@ -60,7 +42,7 @@ class Bat {
 
         }
 
-        // drawPolygon(ctx, 'rgba(15, 11, 13, 0.4)', "black",a_proj, b_proj, c_proj, d_proj);
+        drawPolygon(ctx, 'rgba(15, 11, 13, 0.4)', "black",a_proj, b_proj, c_proj, d_proj);
     }
 
     //for copying bat by value
@@ -95,7 +77,7 @@ class Bat {
 
     }
     addKeyboardController() {
-        window.addEventListener('keypress', function event(e) {
+        window.addEventListener('keydown', function event(e) {
             if (e.key == 'ArrowUp') {
                 this.keyboardClientY -= KeyboardMovement
             }
@@ -107,9 +89,10 @@ class Bat {
             }
             if (e.code == 'ArrowRight') {
                 this.keyboardClientX += KeyboardMovement
-
             }
+            if(e.code=="ArrowUp" || e.code == 'ArrowDown' || e.code == 'ArrowLeft' || e.code == 'ArrowRight'){
             this.updatePosition(this.keyboardClientX - translateX, this.keyboardClientY);
+            }
         }.bind(this));
     }
     //update position of bat in 3D coordinate system as per mouse movement or keyboard event.
@@ -128,8 +111,9 @@ class Bat {
             }
             this.point3D.x = ((this.x) * (1.6) / (CANVAS_WIDTH - 0)) + 0;
             this.point3D.y = -NET_HEIGHT * 2.5;
-        }
+        // }
     }
+}
 
     //rotating bat as per angle in yaxis
     updateAngle(angley) {

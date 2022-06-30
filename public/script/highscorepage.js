@@ -1,9 +1,13 @@
 async function highscorepage() {
     console.log('gg');
-    let list = await bringHighscoreList();
-
     let highscore_container = document.createElement('div');
+    highscore_container.innerHTML="LOADING"
     document.body.append(highscore_container);
+
+    
+    let list = await bringHighscoreList();
+    highscore_container.innerHTML=""
+
 
     for (let i = 0; i < list.length; i++) {
         let scorediv = document.createElement('div');
@@ -27,7 +31,7 @@ async function highscorepage() {
 }
 
 async function bringHighscoreList() {
-    const response = await fetch("http://localhost:3000/api/fetch")
+    const response = await fetch("./api/fetch")
 
     let list = await response.json();
     //sort based on timetaken
@@ -51,7 +55,7 @@ async function highscoreHandler(finishtime, name) {
         });
         console.log("body=", body)
 
-        let resonse_after_add = await fetch("http://localhost:3000/api/create", {
+        let resonse_after_add = await fetch("./api/create", {
             method: 'POST',
             body,
             headers: {
@@ -75,7 +79,7 @@ async function highscoreHandler(finishtime, name) {
             });
             console.log("body=", body)
 
-            let resonse_after_update = await fetch("http://localhost:3000/api/update", {
+            let resonse_after_update = await fetch("./api/update", {
                 method: 'POST',
                 body,
                 headers: {

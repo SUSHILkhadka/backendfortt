@@ -1,4 +1,3 @@
-
 class Scoreboard {
     constructor(player1Name,player2Name) {
 
@@ -62,6 +61,6 @@ class Winnerbox{
         let greet = document.createElement('p');
         greet.innerHTML = `${winner}  WON!!!!`;
         this.winnerbox.append(greet);
-        gamebox.append(winnerbox);
+        gamebox.append(this.winnerbox);
     }
 }

@@ -3,6 +3,7 @@ function controlpage() {
     page.style.position = 'relative';
     page.style.backgroundColor = 'black';
 
+
     let firstplayer = document.createElement("div")
     let name1 = document.createElement("h1")
     name1.innerHTML = "PLAYER1";
@@ -13,7 +14,6 @@ function controlpage() {
     firstplayer.append(name1);
     firstplayer.append(mouseDescription);
     firstplayer.append(cam1Description);
-
 
     let secondplayer = document.createElement("div")
     let name2 = document.createElement("h1")
@@ -26,7 +26,6 @@ function controlpage() {
     secondplayer.append(keyboardDescription);
     secondplayer.append(cam2Description);
 
-
     let bothplayer = document.createElement("p");
     bothplayer.innerHTML = "O and P for zooming in and out camera"
 
@@ -37,11 +36,5 @@ function controlpage() {
     let  backdiv=back.getDiv();
     page.append(backdiv)
     document.body.append(page);
-
-
-
-
-
-
 
 }

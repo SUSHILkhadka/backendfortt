@@ -1,5 +1,4 @@
 class Ball {
-
     /**
      * 
      * @param {*} centre 3D centre point of ball
@@ -149,8 +148,6 @@ collisionTable( ) {
                     // this.upside_collision_flag = 0;
 
                 }
-
-
                 //after collision reverse velocity vector adding some loss
                 this.velocity.y = -Math.abs(this.velocity.y) + LOSS_TABLE;
                 bounche.play();//play sound
@@ -164,7 +161,6 @@ collisionTable( ) {
     collisionNet(ctx,a1,a2){
         if(this.centre.x>=START_BOARD_x && this.centre.x<=(START_BOARD_x+BOARD_WIDTH)){
             if(Math.abs(this.centre.z-(START_BOARD_z+(BOARD_LENGTH/2)))<=2.5*this.rad){
-            // console.log('net collide');
                 if(this.centre.y<=START_BOARD_y && (this.centre.y+this.rad)>=START_BOARD_y-NET_HEIGHT){
                         this.velocity.z=-this.velocity.z*NET_COLLISION_LOSS
 
@@ -180,7 +176,6 @@ collisionTable( ) {
 
     dontGoOutside() {
         if (this.centre.z > START_BOARD_z + BOARD_LENGTH) {
-            // console.log('wallhit')
             this.velocity.z = -Math.abs(this.velocity.z);
             // this.velocity.z = -0.03;
             wallsound.play();
@@ -190,20 +185,17 @@ collisionTable( ) {
         }
 
         if (this.centre.z < START_BOARD_z) {
-            // console.log('wallhit')
             wallsound.play();
             this.velocity.z = Math.abs(this.velocity.z);
             //add power by adding -LOSS
         }
 
         if (this.centre.x < START_BOARD_x) {
-            // console.log('wallhit')
             this.velocity.x = Math.abs(this.velocity.x);
             //add power by adding -LOSS
         }
 
         if (this.centre.x > START_BOARD_x + BOARD_WIDTH) {
-            // console.log('wallhit')
             this.velocity.x = -Math.abs(this.velocity.x);
             //add power by adding -LOSS
         }
@@ -300,11 +292,8 @@ collisionTable( ) {
                         this.centre.y = SHOT_POSITION_Y;
                         this.velocity.y = STABLE_Y_VELOCITY;
 
-                        console.log('before angle response',this.velocity.x)
                         this.velocity.x=(Math.sin(angley)*Math.sin(angley)*-this.velocity.x+Math.cos(angley)*Math.cos(angley)*Math.abs(this.velocity.z)*(-angley/(Math.abs(angley)+1.1)))/4;
-                        console.log('after angle response',this.velocity.x)
                         this.velocity.x += RESPONSE_SCALE_X * bat.speedX;
-                        console.log('after speed response',this.velocity.x)
 
                         this.velocity.z = Math.abs(this.velocity.z) * 0.8 - RESPONSE_SCALE_Z * bat.speedY - 0.001;
                         if (this.serveflag != 0) {
@@ -364,6 +353,74 @@ collisionTable( ) {
         //then undo translation
         let dest1 = new Point3D(START_BOARD_x + (BOARD_WIDTH / 2), START_BOARD_y, START_BOARD_z + (BOARD_LENGTH / 2));
         translateByReference(this.centre, dest1);
+    }
+
+
+    /**
+ * 
+ * @param {*} bat for updating score of player first
+ * @param {*} bat_far for updating score of player second 
+ */
+     updateScore2(bat, bat_far) {
+        if (freeze == 0) {
+            if (this.outOfBoard == 1) {
+                if (this.serverid == 1) {
+    
+                    if (this.downside_collision_flag - this.upside_collision_flag == 0) {
+                        bat.score++;
+                        this.startServe();
+                    }
+                    else if (this.downside_collision_flag > this.upside_collision_flag) {
+                        bat_far.score++
+                        this.startServe();
+                    }
+                }
+                else {
+                    if (this.upside_collision_flag - this.downside_collision_flag == 0) {
+                        bat_far.score++;
+                        this.startServe();
+                    }
+                    else if (this.upside_collision_flag > this.downside_collision_flag) {
+                        bat.score++;
+                        this.startServe();
+                    }
+                }
+    
+            }
+    
+            else if (this.serverid == 1) {
+                if (this.upside_collision_flag == 1 && this.downside_collision_flag == 0) {
+                    //invalid serve
+                    bat_far.score++;
+                    this.startServe();
+                }
+                else if (this.downside_collision_flag - this.upside_collision_flag >= 2) {
+                    bat_far.score++;
+                    this.startServe();
+                }
+    
+                else if (this.upside_collision_flag - this.downside_collision_flag >= 1) {
+                    bat.score++;
+                    this.startServe();
+                }
+            }
+            else if (this.serverid == 2) {
+                if (this.downside_collision_flag == 1 && this.upside_collision_flag == 0) {
+                    //invalid serve
+                    bat.score++;
+                    this.startServe();
+                }
+                else if (this.upside_collision_flag - this.downside_collision_flag >= 2) {
+                    bat.score++;
+                    this.startServe();
+                }
+                else if (this.downside_collision_flag - this.upside_collision_flag >= 1) {
+                    bat_far.score++;
+                    this.startServe();
+                }
+            }
+    
+        }
     }
 
 }

@@ -1,7 +1,3 @@
-
-
-
-
 /**
  * 
  * @param {*} point This is the 3D point to be projected.

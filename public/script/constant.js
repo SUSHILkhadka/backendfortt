@@ -178,15 +178,19 @@ let soundflag=1
 
 let batimage=new Image();
 
-var imageObj = new Image();
-var pattern=null;
-var texture = new Image();
-var texturepattern=null;
+// var imageObj = new Image();
+// var pattern=null;
+// var texture = new Image();
+// var texturepattern=null;
 var imageObj2 = new Image();
 var netpattern=null;
-var imageObj3 = new Image();
-var floorpattern=null;
+// var imageObj3 = new Image();
+// var floorpattern=null;
 
 
 
 var freeze=0;
+
+
+//database 
+const maxlength = 5;

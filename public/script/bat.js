@@ -33,16 +33,14 @@ class Bat {
         let c_proj = project(this.bottomRight, angley, anglex);
         let d_proj = project(this.bottomLeft, angley, anglex);
 
-
         if(this.topLeft.z<(START_BOARD_z+BOARD_LENGTH/2)){
         ctx.drawImage(batimage, a_proj.x, a_proj.y, BAT_WIDTH_2d /(this.topLeft.z*START_ZPLANE*WIDTH_SCALE_FOR_PROJECTION), BAT_HEIGHT_2d /(this.topLeft.z*START_ZPLANE*HEIGHT_SCALE_FOR_PROJECTION));
         }
         else{
         ctx.drawImage(batimage, b_proj.x, b_proj.y, BAT_WIDTH_2d /(1.2*this.topLeft.z*START_ZPLANE*WIDTH_SCALE_FOR_PROJECTION), BAT_HEIGHT_2d /(1.2*this.topLeft.z*START_ZPLANE*HEIGHT_SCALE_FOR_PROJECTION));
-
         }
 
-        drawPolygon(ctx, 'rgba(15, 11, 13, 0.4)', "black",a_proj, b_proj, c_proj, d_proj);
+        // drawPolygon(ctx, 'rgba(15, 11, 13, 0.4)', "black",a_proj, b_proj, c_proj, d_proj);
     }
 
     //for copying bat by value
@@ -161,6 +159,7 @@ class Bat {
         this.bottomLeft.z = -this.bottomLeft.z
         this.bottomRight.z = -this.bottomRight.z
 
+        //then around yz plane
         this.topLeft.x = -this.topLeft.x
         this.topRight.x = -this.topRight.x
         this.bottomLeft.x = -this.bottomLeft.x
@@ -188,9 +187,6 @@ class Bat {
         }
         if(ball.centre.z>START_BOARD_z+BOARD_LENGTH/2){
         this.point3D.z +=0.1/60
-
-
-
         }
     }
 }

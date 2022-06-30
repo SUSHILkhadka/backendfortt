@@ -143,7 +143,6 @@ function drawCircle(ctx, centre, rad) {
     ctx.lineWidth=1
     ctx.strokeStyle=BALL_STROKE_COLOR[0];
     ctx.strokeStyle='black';
-
     ctx.stroke();
 }
 
@@ -195,8 +194,6 @@ function drawCube(ctx,array,strokecolor, point, width, height, length,angley,ang
     drawPolygon(ctx, array[1],strokecolor, pointa, pointd, pointd_be, pointa_be)
     drawPolygon(ctx, array[1],strokecolor, pointb, pointc, pointc_be, pointb_be)
     drawPolygon(ctx, array[4],strokecolor, pointa, pointb, pointc, pointd)
-    // drawPolygon(ctx, array[3],strokecolor, pointa, pointb, pointb_be, pointa_be)
-
     tablecolor= localStorage.getItem('tablecolor_TableTennis') ? localStorage.getItem('tablecolor_TableTennis') : TABLE_COLOR[3];
     drawPolygon(ctx, tablecolor,strokecolor, pointa, pointb, pointb_be, pointa_be);
 }
@@ -210,9 +207,6 @@ function drawCube(ctx,array,strokecolor, point, width, height, length,angley,ang
  */
 
 function serveDeterminer(firstscore,secondscore,currentid,changeServeOn){
-    // console.log(firstscore,secondscore)
-    // console.log("rounded",Math.floor((firstscore+secondscore)/2))
-
     if(Math.floor((firstscore+secondscore)/changeServeOn)%2==0){
         return 1;
     }

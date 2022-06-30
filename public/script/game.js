@@ -1,3 +1,10 @@
+/**
+ * 
+ * @param {*} gamemode 1 for single player, 2 for multiplayer
+ * @param {*} training 1 for enabling training mode, 0 for disabling
+ */
+
+
 function gameloop(gamemode = 1, training = 0) {
 
 
@@ -36,10 +43,7 @@ function gameloop(gamemode = 1, training = 0) {
     let alpha2 = 0.8
     let alpha3 = 1
 
-    pattern = ctx.createPattern(imageObj, 'repeat');
-    texturepattern = ctx.createPattern(texture, 'repeat');
     netpattern = ctx.createPattern(imageObj2, 'repeat');
-    floorpattern = ctx.createPattern(imageObj3, 'repeat');
     if (gamemode == 2) {
         adjustXdependingOnGameMode = 0
         adjustYdependingOnGameMode = 0;
@@ -249,8 +253,6 @@ function gameloop(gamemode = 1, training = 0) {
                 bat_far.trackBall(ball);
                 bat_far.adjustRange(ball);
             }
-            console.log('before drawing translateX ', translateX)
-            console.log('before drawing adjust x', adjustXdependingOnGameMode)
             ctx.translate(translateX + adjustXdependingOnGameMode, translateY + adjustYdependingOnGameMode);
             ctx.globalAlpha = alpha1;
             if (angy < 14) {
@@ -277,15 +279,15 @@ function gameloop(gamemode = 1, training = 0) {
             scoreboard.updateScore(bat.score, bat_far.score);
 
             if (freeze == 0 && training == 0) {
-                updateScore2(ball, bat, bat_far);
+                // updateScore2(ball, bat, bat_far);
+                ball.updateScore2(bat, bat_far);
+
             }
             ball.serverid = serveDeterminer(bat.score, bat_far.score, ball.serverid, changeServeOn);
             if (gamemode == 1) {
                 ball.serverid = 1
             }
             ctx.translate(-translateX - adjustXdependingOnGameMode, -translateY - adjustYdependingOnGameMode);
-            console.log('after drawing translateX ', translateX)
-            console.log('after drawing adjust x', adjustXdependingOnGameMode)
 
 
             //next bat calculation
@@ -331,8 +333,6 @@ function gameloop(gamemode = 1, training = 0) {
 
                 ctx2.translate(-translateX, -translateY);
             }
-
-
             requestAnimationFrame(play);
         }
 
@@ -344,71 +344,3 @@ function gameloop(gamemode = 1, training = 0) {
 
 
 
-/**
- * 
- * @param {*} ball used for upside collision count, downside collision count, and other flags
- * @param {*} bat for updating score of player first
- * @param {*} bat_far for updating score of player second 
- */
-
-function updateScore2(ball, bat, bat_far) {
-    if (freeze == 0) {
-        if (ball.outOfBoard == 1) {
-            if (ball.serverid == 1) {
-
-                if (ball.downside_collision_flag - ball.upside_collision_flag == 0) {
-                    bat.score++;
-                    ball.startServe();
-                }
-                else if (ball.downside_collision_flag > ball.upside_collision_flag) {
-                    bat_far.score++
-                    ball.startServe();
-                }
-            }
-            else {
-                if (ball.upside_collision_flag - ball.downside_collision_flag == 0) {
-                    bat_far.score++;
-                    ball.startServe();
-                }
-                else if (ball.upside_collision_flag > ball.downside_collision_flag) {
-                    bat.score++;
-                    ball.startServe();
-                }
-            }
-
-        }
-
-        else if (ball.serverid == 1) {
-            if (ball.upside_collision_flag == 1 && ball.downside_collision_flag == 0) {
-                //invalid serve
-                bat_far.score++;
-                ball.startServe();
-            }
-            else if (ball.downside_collision_flag - ball.upside_collision_flag >= 2) {
-                bat_far.score++;
-                ball.startServe();
-            }
-
-            else if (ball.upside_collision_flag - ball.downside_collision_flag >= 1) {
-                bat.score++;
-                ball.startServe();
-            }
-        }
-        else if (ball.serverid == 2) {
-            if (ball.downside_collision_flag == 1 && ball.upside_collision_flag == 0) {
-                //invalid serve
-                bat.score++;
-                ball.startServe();
-            }
-            else if (ball.upside_collision_flag - ball.downside_collision_flag >= 2) {
-                bat.score++;
-                ball.startServe();
-            }
-            else if (ball.downside_collision_flag - ball.upside_collision_flag >= 1) {
-                bat_far.score++;
-                ball.startServe();
-            }
-        }
-
-    }
-}

@@ -2,29 +2,31 @@ function settingpage() {
     let settingpage = document.querySelector('.settingpage');
     settingpage.style.display = 'block';
 
-    let back=new Backbutton(settingpage,menu,'back',"absolute",true);
-   let  backdiv=back.getDiv();
+    let back = new Backbutton(settingpage, menu, 'back', "absolute", true);
+    let backdiv = back.getDiv();
     settingpage.append(backdiv)
 
-
-    document.querySelector("#firstplayername").value= localStorage.getItem('player1Name_TableTennis') ? localStorage.getItem('player1Name_TableTennis') : "Player1";
-    document.querySelector("#secondplayername").value= localStorage.getItem('player2Name_TableTennis') ? localStorage.getItem('player2Name_TableTennis') : "Player2";
-    document.querySelector("#towinscore").value= localStorage.getItem('toWinScore_TableTennis') ? localStorage.getItem('toWinScore_TableTennis') : 11;
-    document.querySelector("#changeserveon").value= localStorage.getItem('changeServeOn') ? localStorage.getItem('changeServeOn') : 2;
-    document.querySelector("#timescale").value= localStorage.getItem('timescale_TableTennis') ? localStorage.getItem('timescale_TableTennis') : 0.7;
-    document.querySelector("#tablecolor").value= localStorage.getItem('tablecolor_TableTennis') ? localStorage.getItem('tablecolor_TableTennis') : TABLE_COLOR[3];
-    document.querySelector("#ballcolor").value= localStorage.getItem('ballcolor_TableTennis') ? localStorage.getItem('ballcolor_TableTennis') : BALL_COLOR[1];
+    //if value already exists on local storage, use it. Otherwise use default values
+    document.querySelector("#firstplayername").value = localStorage.getItem('player1Name_TableTennis') ? localStorage.getItem('player1Name_TableTennis') : "Player1";
+    document.querySelector("#secondplayername").value = localStorage.getItem('player2Name_TableTennis') ? localStorage.getItem('player2Name_TableTennis') : "Player2";
+    document.querySelector("#towinscore").value = localStorage.getItem('toWinScore_TableTennis') ? localStorage.getItem('toWinScore_TableTennis') : 11;
+    document.querySelector("#changeserveon").value = localStorage.getItem('changeServeOn') ? localStorage.getItem('changeServeOn') : 2;
+    document.querySelector("#timescale").value = localStorage.getItem('timescale_TableTennis') ? localStorage.getItem('timescale_TableTennis') : 0.7;
+    document.querySelector("#tablecolor").value = localStorage.getItem('tablecolor_TableTennis') ? localStorage.getItem('tablecolor_TableTennis') : TABLE_COLOR[3];
+    document.querySelector("#ballcolor").value = localStorage.getItem('ballcolor_TableTennis') ? localStorage.getItem('ballcolor_TableTennis') : BALL_COLOR[1];
 
     let reset = document.querySelector('#reset');
-    reset.addEventListener('click',function event(e) {
+    reset.addEventListener('click', function event(e) {
 
-        document.querySelector("#firstplayername").value="Player1";
-        document.querySelector("#secondplayername").value= "Player2";
-        document.querySelector("#towinscore").value=11;
-        document.querySelector("#changeserveon").value=2;
-        document.querySelector("#timescale").value=0.7;
-        document.querySelector("#tablecolor").value= TABLE_COLOR[3];
-        document.querySelector("#ballcolor").value= BALL_COLOR[1];
+        //when reset key is pressed, reset values and local storage values
+
+        document.querySelector("#firstplayername").value = "Player1";
+        document.querySelector("#secondplayername").value = "Player2";
+        document.querySelector("#towinscore").value = 11;
+        document.querySelector("#changeserveon").value = 2;
+        document.querySelector("#timescale").value = 0.7;
+        document.querySelector("#tablecolor").value = TABLE_COLOR[3];
+        document.querySelector("#ballcolor").value = BALL_COLOR[1];
 
         localStorage.setItem('player1Name_TableTennis', "Player1")
         localStorage.setItem('player2Name_TableTennis', "Player2")
@@ -38,21 +40,23 @@ function settingpage() {
     })
 
     let save = document.querySelector('#save');
-    save.addEventListener('click',function event(e) {
+    save.addEventListener('click', function event(e) {
 
-        let a=document.querySelector("#firstplayername").value
-        let b=document.querySelector("#secondplayername").value
-        let c=document.querySelector("#towinscore").value
-        let d=document.querySelector("#changeserveon").value
-        timeScale=document.querySelector("#timescale").value
-        if(timeScale>2){
-            timeScale=2;
+        //when save key is pressed, fetch from input and save it on local storage
+
+        let a = document.querySelector("#firstplayername").value
+        let b = document.querySelector("#secondplayername").value
+        let c = document.querySelector("#towinscore").value
+        let d = document.querySelector("#changeserveon").value
+        timeScale = document.querySelector("#timescale").value
+        if (timeScale > 2) {
+            timeScale = 2;
         }
-    if(timeScale<=0){
-        timeScale=0;
-    }
-    let ee=document.querySelector("#tablecolor").value
-    let f=document.querySelector("#ballcolor").value
+        if (timeScale <= 0) {
+            timeScale = 0;
+        }
+        let ee = document.querySelector("#tablecolor").value
+        let f = document.querySelector("#ballcolor").value
 
         localStorage.setItem('player1Name_TableTennis', a)
         localStorage.setItem('player2Name_TableTennis', b)

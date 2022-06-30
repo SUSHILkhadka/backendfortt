@@ -15,6 +15,12 @@ function gameloop(gamemode = 1, training = 0) {
     canvas.style.cursor = 'none'
     let adjustXdependingOnGameMode = -100
     let adjustYdependingOnGameMode = 200;
+    canvasWidthDividerForMultiplayer = 1
+    canvasHeightDividerForMultiplayer = 1
+    WIDTH_SCALE_FOR_PROJECTION = 1;
+    HEIGHT_SCALE_FOR_PROJECTION = 1;
+    ballradiusfactor = 1.7
+    shadowradiusfactor = 10000
 
     let canvas2 = document.createElement("canvas")
     let ctx2 = canvas2.getContext('2d');
@@ -26,20 +32,19 @@ function gameloop(gamemode = 1, training = 0) {
     let changeServeOn = localStorage.getItem('changeServeOn') ? localStorage.getItem('changeServeOn') : 2;
     timeScale = localStorage.getItem('timescale_TableTennis') ? localStorage.getItem('timescale_TableTennis') : 0.7;
 
-    let alpha1=0.8
-    let alpha2=0.7
-    let alpha3=1
+    let alpha1 = 0.8
+    let alpha2 = 0.8
+    let alpha3 = 1
 
     pattern = ctx.createPattern(imageObj, 'repeat');
-texturepattern = ctx.createPattern(texture, 'repeat');
-netpattern = ctx.createPattern(imageObj2, 'repeat');
-floorpattern = ctx.createPattern(imageObj3, 'repeat');
+    texturepattern = ctx.createPattern(texture, 'repeat');
+    netpattern = ctx.createPattern(imageObj2, 'repeat');
+    floorpattern = ctx.createPattern(imageObj3, 'repeat');
     if (gamemode == 2) {
         adjustXdependingOnGameMode = 0
         adjustYdependingOnGameMode = 0;
         canvasWidthDividerForMultiplayer = 1
         canvasHeightDividerForMultiplayer = 2
-
         WIDTH_SCALE_FOR_PROJECTION = 2;
         HEIGHT_SCALE_FOR_PROJECTION = 2;
 
@@ -48,9 +53,9 @@ floorpattern = ctx.createPattern(imageObj3, 'repeat');
 
         START_ZPLANE = 1.5
 
-         alpha1=0.8
-         alpha2=0.9
-         alpha3=1
+        alpha1 = 0.8
+        alpha2 = 0.8
+        alpha3 = 1
 
         canvas.width = CANVAS_WIDTH / canvasWidthDividerForMultiplayer;
         canvas.height = CANVAS_HEIGHT / canvasHeightDividerForMultiplayer;
@@ -114,7 +119,9 @@ floorpattern = ctx.createPattern(imageObj3, 'repeat');
     if (gamemode == 2) {
         bat_far.addKeyboardController();
     }
-    window.addEventListener('keydown', function event(e) {
+
+    //event listener for 
+    window.addEventListener('keypress', function event(e) {
         if (e.code == 'KeyP') {
             if (START_ZPLANE > RESTRICTION_START_ZPLANE_min) {
                 START_ZPLANE -= incrementDistance;
@@ -179,7 +186,8 @@ floorpattern = ctx.createPattern(imageObj3, 'repeat');
 
         if (gameoverflag == 0) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#87ceeb'
+            ctx.fillStyle = '#16161d'
+
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
@@ -199,14 +207,7 @@ floorpattern = ctx.createPattern(imageObj3, 'repeat');
                         highscoreHandler(timetaken, player2Name)
                     }
 
-                    let winnerbox = document.createElement('div');
-                    winnerbox.style.position = 'absolute';
-                    winnerbox.style.top = toPx(CANVAS_HEIGHT / 2);
-                    winnerbox.style.left = toPx(CANVAS_WIDTH / 2.2);
-                    let greet = document.createElement('p');
-                    greet.innerHTML = `${winner}  WON!!!!`;
-                    winnerbox.append(greet);
-                    gamebox.append(winnerbox);
+                    let winnerbox = new Winnerbox(gamebox, winner)
 
                     setTimeout(function () {
                         ambientsound.pause();
@@ -220,7 +221,6 @@ floorpattern = ctx.createPattern(imageObj3, 'repeat');
                         return 0;
                     }, 2000)
                 }
-
             }
 
 
@@ -249,7 +249,8 @@ floorpattern = ctx.createPattern(imageObj3, 'repeat');
                 bat_far.trackBall(ball);
                 bat_far.adjustRange(ball);
             }
-
+            console.log('before drawing translateX ', translateX)
+            console.log('before drawing adjust x', adjustXdependingOnGameMode)
             ctx.translate(translateX + adjustXdependingOnGameMode, translateY + adjustYdependingOnGameMode);
             ctx.globalAlpha = alpha1;
             if (angy < 14) {
@@ -283,6 +284,8 @@ floorpattern = ctx.createPattern(imageObj3, 'repeat');
                 ball.serverid = 1
             }
             ctx.translate(-translateX - adjustXdependingOnGameMode, -translateY - adjustYdependingOnGameMode);
+            console.log('after drawing translateX ', translateX)
+            console.log('after drawing adjust x', adjustXdependingOnGameMode)
 
 
             //next bat calculation
@@ -318,7 +321,7 @@ floorpattern = ctx.createPattern(imageObj3, 'repeat');
                 world2.drawWorld(ctx2, angy2, angx2);
                 table.drawAll(ctx2, angy2, angx2);
 
-                ctx2.globalAlpha=alpha2;
+                ctx2.globalAlpha = alpha2;
                 batMirror.drawBat3D(ctx2, angy2, angx2);
                 table.drawNet(ctx2, angy2, angx2);
                 bat_far.drawBat3D(ctx2, angy2, angx2);

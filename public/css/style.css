@@ -57,18 +57,17 @@ h1 {
     border-radius: 2rem;
 
 }
-/* h2 {
+h2 {
     display: block;
-    padding: 1.2rem;
+    padding: .2rem;
 
-    margin-bottom: 1.5rem;
-    background-color: black;
+    margin-bottom: 0.5rem;
+    /* background-color: black; */
     color: red;
     opacity: 90%;
-    font-size: 2rem;
-    border-radius: 2rem;
 
-} */
+
+}
 div p{
     display: block;
     padding: 0.5rem;

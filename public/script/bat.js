@@ -63,7 +63,7 @@ class Bat {
         // drawPolygon(ctx, 'rgba(15, 11, 13, 0.4)', "black",a_proj, b_proj, c_proj, d_proj);
     }
 
-
+    //for copying bat by value
     new(a, b, c, d) {
         this.topLeft = Object.create(a);
         this.topRight = Object.create(b);
@@ -95,18 +95,15 @@ class Bat {
 
     }
     addKeyboardController() {
-        window.addEventListener('keydown', function event(e) {
+        window.addEventListener('keypress', function event(e) {
             if (e.key == 'ArrowUp') {
                 this.keyboardClientY -= KeyboardMovement
-
             }
             if (e.key == 'ArrowDown') {
                 this.keyboardClientY += KeyboardMovement
-
             }
             if (e.code == 'ArrowLeft') {
                 this.keyboardClientX -= KeyboardMovement
-
             }
             if (e.code == 'ArrowRight') {
                 this.keyboardClientX += KeyboardMovement
@@ -114,7 +111,6 @@ class Bat {
             }
             this.updatePosition(this.keyboardClientX - translateX, this.keyboardClientY);
         }.bind(this));
-
     }
     //update position of bat in 3D coordinate system as per mouse movement or keyboard event.
     updatePosition(x = nomouse, y = nomouse, tilt_angle = 0) {
@@ -194,14 +190,7 @@ class Bat {
         translateByReference(this.bottomRight, dest1);
     }
 
-    //for copying bat by value
-    copy(anotherbat) {
-        this.topLeft = anotherbat.topLeft;
-        this.topRight = anotherbat.topRight;
-        this.bottomLeft = anotherbat.bottomLeft;
-        this.bottomRight = anotherbat.bottomRight;
 
-    }
     //for bot tracking ball in x axis
     trackBall(ball) {
         this.point3D.x =(START_BOARD_x+BOARD_WIDTH) -(ball.centre.x + BAT_WIDTH / 2);

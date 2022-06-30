@@ -84,8 +84,6 @@ class World{
     drawFloorDecoration(ctx,angley,anglex){
         let lightWidth=0.3
         let a=new Point3D(START_BOARD_x+BOARD_WIDTH/2-lightWidth/2,GROUND_START_y-WALL_HEIGHT,START_BOARD_z+BOARD_LENGTH/2);
-
         drawCube(ctx,LIGHT_COLOR,"black",a,lightWidth,0.1,0.1,angley,anglex);
-        // drawCube(ctx,this.point,GROUND_WIDTH,1,GROUND_LENGTH);
     }
 }

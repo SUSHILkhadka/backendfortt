@@ -3,19 +3,16 @@ class Scoreboard {
     constructor(player1Name,player2Name) {
 
         this.scoreboard = document.createElement('div');
-        this.name1 = document.createElement('h3')
+        this.name1 = document.createElement('h2')
         this.name1.innerHTML = `${player1Name}`
-        this.name2 = document.createElement('h3')
+        this.name2 = document.createElement('h2')
         this.name2.innerHTML = `${player2Name}`
         this.score1 = document.createElement('h2');
         this.score2 = document.createElement('h2');
-        this.serveflag = document.createElement('h2');
         this.scoreboard.append(this.name1);
         this.scoreboard.append(this.score1);
         this.scoreboard.append(this.name2);
         this.scoreboard.append(this.score2);
-        this.scoreboard.append(this.serveflag);
-        this.scoreboard.style.background = 'transparent'
         this.scoreboard.style.position = "absolute";
         this.scoreboard.style.zIndex = "1"
         this.scoreboard.style.top = '0px';
@@ -54,8 +51,17 @@ class Backbutton{
         return this.backbutton;
     }
 
+}
 
-
-
-
+class Winnerbox{
+    constructor(gamebox,winner){
+        this.winnerbox = document.createElement('div');
+        this.winnerbox.style.position = 'absolute';
+        this.winnerbox.style.top = toPx(CANVAS_HEIGHT / 2);
+        this.winnerbox.style.left = toPx(CANVAS_WIDTH / 2.2);
+        let greet = document.createElement('p');
+        greet.innerHTML = `${winner}  WON!!!!`;
+        this.winnerbox.append(greet);
+        gamebox.append(winnerbox);
+    }
 }

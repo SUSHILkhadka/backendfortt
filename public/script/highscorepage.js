@@ -1,13 +1,13 @@
 async function highscorepage() {
     console.log('gg');
     let highscore_container = document.createElement('div');
-    highscore_container.innerHTML="LOADING"
+    let loading = document.createElement('p')
+    loading.innerHTML = "LOADING..."
+    highscore_container.append(loading)
     document.body.append(highscore_container);
 
-    
     let list = await bringHighscoreList();
-    highscore_container.innerHTML=""
-
+    highscore_container.innerHTML = ""
 
     for (let i = 0; i < list.length; i++) {
         let scorediv = document.createElement('div');
@@ -24,8 +24,8 @@ async function highscorepage() {
 
     }
 
-    let back=new Backbutton(highscore_container,menu,'back','relative');
-    let  backdiv=back.getDiv();
+    let back = new Backbutton(highscore_container, menu, 'back', 'relative');
+    let backdiv = back.getDiv();
     highscore_container.append(backdiv)
 
 }
@@ -67,7 +67,6 @@ async function highscoreHandler(finishtime, name) {
     }
 
     for (let i = 0; i < maxlength; i++) {
-
         if (finishtime < list[i]['timetaken']) {
             //add to firestore
             //delete last document using ith id
@@ -86,9 +85,6 @@ async function highscoreHandler(finishtime, name) {
                     'Content-Type': 'application/json'
                 }
             });
-
-
-
             return 0;
         }
     }

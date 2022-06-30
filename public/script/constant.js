@@ -50,9 +50,7 @@ const GROUND_START_z=1
 
 const GROUND_WIDTH=3
 const GROUND_LENGTH=5
-
 const WALL_HEIGHT=1.2;
-
 
 //actual table constants
 const BOARD_WIDTH=0.4

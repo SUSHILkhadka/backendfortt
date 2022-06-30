@@ -36,10 +36,3 @@ class Plane3D{
     }
 }
 
-// class ScoreUpdateFlags{
-//     constructor(){
-//         this.nearside_collision_count=0;
-//         this.farside_collision_count=0;
-
-//     }
-// }

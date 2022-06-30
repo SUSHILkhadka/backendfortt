@@ -3,11 +3,7 @@
  * @param {*} gamemode 1 for single player, 2 for multiplayer
  * @param {*} training 1 for enabling training mode, 0 for disabling
  */
-
-
 function gameloop(gamemode = 1, training = 0) {
-
-
     let gamebox = document.createElement("div")
     gamebox.style.position = 'relative';
     gamebox.style.backgroundColor = 'black'
@@ -111,7 +107,6 @@ function gameloop(gamemode = 1, training = 0) {
     ambientsound.play();
     ambientsound.loop = true;
 
-
     //scoreboard
     let scoreboard = new Scoreboard(player1Name, player2Name);
     gamebox.append(scoreboard.getDiv());
@@ -183,7 +178,6 @@ function gameloop(gamemode = 1, training = 0) {
         }
     });
 
-
     let startime = Date.now();
 
     function play() {
@@ -227,7 +221,6 @@ function gameloop(gamemode = 1, training = 0) {
                 }
             }
 
-
             bat.updateAngle(angy);
             bat_far.updateAngle(angy2);
             let bat_farMirror = new Bat();
@@ -237,19 +230,20 @@ function gameloop(gamemode = 1, training = 0) {
             ball.updatePosition();
             ball.collisionTable(bat, bat_far);
             if (training == 0) {
-                ball.collisionNet(ctx, angy, angx);
+                ball.collisionNet();
             }
             if (training == 1) {
                 ball.dontGoOutside();
             }
 
-            if (freeze == 0) {
+            if (ball.freeze == 0) {
                 ball.collisionBat2(angy, angy2, bat, bat_far);
                 bat.updatePosition();
                 bat_far.updatePosition();
             }
+
             //bot tracking movements both x and y:
-            if (gamemode == 1 && freeze == 0 && training == 0) {
+            if (gamemode == 1 && ball.freeze == 0 && training == 0) {
                 bat_far.trackBall(ball);
                 bat_far.adjustRange(ball);
             }
@@ -273,15 +267,12 @@ function gameloop(gamemode = 1, training = 0) {
             ctx.globalAlpha = alpha3;
             ball.drawAll(ctx, angy, angx);
 
-
-
             //score
             scoreboard.updateScore(bat.score, bat_far.score);
 
-            if (freeze == 0 && training == 0) {
+            if (ball.freeze == 0 && training == 0) {
                 // updateScore2(ball, bat, bat_far);
                 ball.updateScore2(bat, bat_far);
-
             }
             ball.serverid = serveDeterminer(bat.score, bat_far.score, ball.serverid, changeServeOn);
             if (gamemode == 1) {
@@ -289,23 +280,30 @@ function gameloop(gamemode = 1, training = 0) {
             }
             ctx.translate(-translateX - adjustXdependingOnGameMode, -translateY - adjustYdependingOnGameMode);
 
-
             //next bat calculation
             let ballMirror = new Ball();
-            ballMirror.new(ball.centre, ball.rad, ball.velocity, ball.upside_collision_flag, ball.downside_collision_flag, ball.serveflag, ball.lastCollidedBat)
+            ballMirror.new(ball.centre, ball.rad, ball.velocity, ball.upside_collision_flag, ball.downside_collision_flag, ball.serveflag, ball.lastCollidedBat, ball.previousCollisionSum, ball.freeze)
             ballMirror.reflection();
             let batMirror = new Bat();
             batMirror.new(bat.topLeft, bat.topRight, bat.bottomLeft, bat.bottomRight)
             batMirror.reflection();
-            if (freeze == 0) {
+            if (ball.freeze == 0) {
                 ballMirror.collisionBat2(angy, angy2, bat_far, bat, false);
                 ball.velocity = ballMirror.velocity;
                 ball.centre.y = ballMirror.centre.y
                 ball.serveflag = ballMirror.serveflag;
+                ball.upside_collision_flag = ballMirror.upside_collision_flag;
+                ball.outOfBoard = ballMirror.outOfBoard
+                ball.downside_collision_flag = ballMirror.downside_collision_flag;
+                ball.previousCollisionSum = ballMirror.previousCollisionSum;
+                ball.freeze = ballMirror.freeze
+                ball.previousCollisionSum = ballMirror.previousCollisionSum;
+                ball.lastCollidedBat = ballMirror.lastCollidedBat;
+
+
                 bat_far.updateAngle(angy2);
                 bat_far.updatePosition();
             }
-
 
             ctx2.clearRect(0, 0, canvas.width, canvas.height);
             //next bat draw
@@ -335,8 +333,6 @@ function gameloop(gamemode = 1, training = 0) {
             }
             requestAnimationFrame(play);
         }
-
-
     }
     play();
 }

@@ -114,13 +114,6 @@ function drawPolygon(ctx, color,strokecolor, ...obj) {
     ctx.stroke();
 }
 
-
-
-function drawPolygonImage(ctx, color, ...obj) {
-
-};
-
-
 /**
  * 
  * @param {*} ctx canvas context
@@ -148,7 +141,6 @@ function drawCircle(ctx, centre, rad) {
 
 
 function shadowCircle(ctx, centre2D, rad) {
-
     ctx.beginPath();
     ctx.arc(centre2D.x, centre2D.y, rad, 0, 2 * Math.PI);
     ctx.fillStyle = SHADOW_COLOR[0]

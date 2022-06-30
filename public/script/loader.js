@@ -5,16 +5,13 @@ batimage.onload = function () {
 
 };
 
-
 imageObj2.onload = function () {
     assetpreload++;
     removeLoading(assetpreload);
-
 };
 
 batimage.src = "./asset/bat.png";
 imageObj2.src = "./asset/net.png";
-
 
 /**
  * 

@@ -1,17 +1,6 @@
 const CANVAS_WIDTH=1400;
 const CANVAS_HEIGHT=650;
 
-//global variables for gamemode
-
-var canvasWidthDividerForMultiplayer=1;
-var canvasHeightDividerForMultiplayer=1;
-
-WIDTH_SCALE_FOR_PROJECTION=1
-HEIGHT_SCALE_FOR_PROJECTION=1
-
-ballradiusfactor=1.7
-shadowradiusfactor=10000
-
 //projection constants
 const degrees=90
 const aspect=1
@@ -22,19 +11,14 @@ const f=1/Math.tan((degrees/2) * Math.PI / 180)
 
 const translateX=550;
 const translateY=150;    
-
 const nomouse=9000;
-//these are not actually constants. They are global variable used for testing.
-START_ZPLANE=2
 
 //camera capped at in degree with Y , X and near and far distance capped by min and max.
 const RESTRICTION_START_ZPLANE_min= 1
 const RESTRICTION_START_ZPLANE_max= 4
-// const RESTRICTION_ANGLE_Y= 50
-const RESTRICTION_ANGLE_Y= 180
+const RESTRICTION_ANGLE_Y= 50
 
-// const RESTRICTION_ANGLE_X= 55
-const RESTRICTION_ANGLE_X= 180
+const RESTRICTION_ANGLE_X= 55
 
 
 
@@ -96,7 +80,8 @@ const START_LEG_xr=START_BOARD_x+BOARD_WIDTH-10
 
 // const NET_COLLISION_THRESHOLD_Z=0.02
 const NET_COLLISION_THRESHOLD_Y=NET_HEIGHT/1.3
-const NET_COLLISION_LOSS=0.6
+const NET_COLLISION_LOSS=0.7
+const NET_COLLISION_Y_JUMP=0.0005
 
 //bat
 //for actual 3d 
@@ -115,9 +100,7 @@ const BALL_RADIUS_2D=20
 const BALL_RADIUS=5
 
 const BALL_COLOR=["rgba(255, 177, 0, 0.1)","#E68A00","rgb(255,255,255,1)"]
-// BALL_STROKE_COLOR=['rgb(51, 31, 0,1)']
 const BALL_STROKE_COLOR=['rgb(255, 0, 0,1)']
-
 const SHADOW_COLOR=["rgba(0, 0, 0, 0.8)"]
 
 const STARTING_BALL_POSITION_Y=-0.1
@@ -136,29 +119,20 @@ const SERVEDOWN_z=START_BOARD_z+BOARD_LENGTH/10
 
 //physics constant
 const GRAVITY=0.00128
-// const GRAVITY=0.01
 
 
-const FLOORSTART_Y=800
+// const FLOORSTART_Y=800
 const LOSS_TABLE=0.00
 const LOSS_GROUND=0.0007
-// const timeScale=0.7
-var timeScale=localStorage.getItem('timescale_TableTennis') ? localStorage.getItem('timescale_TableTennis') : 0.7;
 
 const thresholdVelocityY=0.00000001
-
-
 
 const thresholdX=0.04;
 const thresholdY=0.01;
 const thresholdZ=0.3;
-
 const COLLISION_DETECTION_LIMIT=400
 
-
-
 //strike back or collision response constants
-// const RESPONSE_SCALE_ZtoX=10;
 const RESPONSE_SCALE_Z=0.0002;
 const RESPONSE_SCALE_X=0.00003;
 
@@ -167,29 +141,6 @@ const SHOT_POSITION_Y=-0.17
 const BAT_LENGTHINZAXIS_FOR_SHOT=0.4
 
 
-// global variables
-let ambientsound = new Audio('asset/ambient.mp3');
-let bounche = new Audio('asset/bounche.m4a');
-let batsound = new Audio('asset/bat.m4a');
-let wallsound = new Audio('asset/wallbounce.mp3');
-let batsound2 = new Audio('asset/balls.wav');
-let refreesound=new Audio('asset/refree.m4a');
-let soundflag=1
-
-let batimage=new Image();
-
-// var imageObj = new Image();
-// var pattern=null;
-// var texture = new Image();
-// var texturepattern=null;
-var imageObj2 = new Image();
-var netpattern=null;
-// var imageObj3 = new Image();
-// var floorpattern=null;
-
-
-
-var freeze=0;
 
 
 //database 

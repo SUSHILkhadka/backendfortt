@@ -3,9 +3,8 @@ class Bat {
         this.x = START_BOARD_x;
         this.y = START_BOARD_y;
         this.point3D = new Point3D();
-        this.tilt_angle = 20;
 
-        this.topLeft = new Point(0.1706666666666667, -0.1, 1);
+        this.topLeft = new Point(0, 0, 0);
         this.topRight = 0;
         this.bottomRight = 0;
         this.bottomLeft = 0;
@@ -39,10 +38,9 @@ class Bat {
         else{
         ctx.drawImage(batimage, b_proj.x, b_proj.y, BAT_WIDTH_2d /(1.2*this.topLeft.z*START_ZPLANE*WIDTH_SCALE_FOR_PROJECTION), BAT_HEIGHT_2d /(1.2*this.topLeft.z*START_ZPLANE*HEIGHT_SCALE_FOR_PROJECTION));
         }
-
+        //draws actual bat bounding box
         // drawPolygon(ctx, 'rgba(15, 11, 13, 0.4)', "black",a_proj, b_proj, c_proj, d_proj);
     }
-
     //for copying bat by value
     new(a, b, c, d) {
         this.topLeft = Object.create(a);
@@ -94,7 +92,7 @@ class Bat {
         }.bind(this));
     }
     //update position of bat in 3D coordinate system as per mouse movement or keyboard event.
-    updatePosition(x = nomouse, y = nomouse, tilt_angle = 0) {
+    updatePosition(x = nomouse, y = nomouse) {
         if (x == nomouse && y == nomouse) {
         }
         else {

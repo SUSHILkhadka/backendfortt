@@ -11,15 +11,21 @@ class Ball {
         this.rad = rad;
         this.velocity = velocity;
 
-        this.outOfBoard=0;
+        //for freezing bat collision when refree blows whistle
+        this.freeze = 0;
+
+        //for score updating
+        this.outOfBoard = 0;
         this.upside_collision_flag = 0;
         this.downside_collision_flag = 0;
-        this.lastCollidedBat=0;
+        this.lastCollidedBat = 0;
 
         //serve flag for disableing updateposition on ball
         this.serveflag = 1;
         //id for where to position ball for serve
         this.serverid = 1;
+        //for bat to bat direct hit
+        this.previousCollisionSum = -1;
     }
 
     drawAll(ctx, angley, anglex) {
@@ -29,15 +35,17 @@ class Ball {
 
 
     //copying ball object by value.
-    new(centre, rad, velocity, upsideflag, downsideflag, serveflag,lastCollidedBat) {
+    new(centre, rad, velocity, upsideflag, downsideflag, serveflag, lastCollidedBat, previousCollisionSum, freeze) {
         this.centre = Object.create(centre);
         this.rad = rad;
         this.velocity = Object.create(velocity)
-        
+
         this.upside_collision_flag = upsideflag;
         this.downside_collision_flag = downsideflag;
         this.serveflag = serveflag;
         this.lastCollidedBat = lastCollidedBat;
+        this.previousCollisionSum = previousCollisionSum;
+        this.freeze = freeze;
 
     }
 
@@ -46,7 +54,7 @@ class Ball {
     updatePosition() {
 
         if (this.serveflag == 0) {
-            this.velocity.y += GRAVITY*timeScale
+            this.velocity.y += GRAVITY * timeScale
             this.centre.x += this.velocity.x * timeScale
             this.centre.y += this.velocity.y * timeScale
             this.centre.z += this.velocity.z * timeScale
@@ -59,11 +67,13 @@ class Ball {
 
             }
             if (this.serverid == 2) {
-                this.serveUp(); 
+                this.serveUp();
                 // this.serve=0;
             }
         }
     }
+
+    //serve down location
     serveDown() {
         this.velocity.x = 0;
         this.velocity.y = 0;
@@ -72,7 +82,7 @@ class Ball {
         this.centre.y = SERVEDOWN_y;
         this.centre.z = SERVEDOWN_z;
     }
-
+    //serve up location
     serveUp() {
         this.velocity.x = 0;
         this.velocity.y = 0;
@@ -82,16 +92,18 @@ class Ball {
         this.centre.z = SERVEUP_z;
 
     }
-    startServe(){
-            freeze=1;
-            refreesound.play();
-            setTimeout(function(){
-            this.serveflag=1;
-            this.upside_collision_flag=0;
-            this.downside_collision_flag=0;
-            this.outOfBoard=0;
-                freeze=0;
-            }.bind(this),3000);
+
+    startServe() {
+        this.freeze = 1;
+        refreesound.play();
+        setTimeout(function () {
+            this.serveflag = 1;
+            this.upside_collision_flag = 0;
+            this.downside_collision_flag = 0;
+            this.outOfBoard = 0;
+            this.previousCollisionSum = -1;
+            this.freeze = 0;
+        }.bind(this), 3000);
 
     }
 
@@ -102,26 +114,27 @@ class Ball {
         let guessRadius = BALL_RADIUS_2D;
         guessRadius /= ballradiusfactor * (this.centre.z - 1 + START_ZPLANE);
         //draw circle
-        drawCircle(ctx, c, guessRadius);
+        if (this.centre.z > START_BOARD_z - BOARD_LENGTH / 8) {
+            drawCircle(ctx, c, guessRadius);
+        }
     }
 
     //draws shadow as circle
     drawShadow(ctx, angley, anglex) {
         let temp = new Point3D(this.centre.x, START_BOARD_y, this.centre.z);
-        if(this.centre.x<START_BOARD_x || this.centre.x>START_BOARD_x+BOARD_WIDTH || this.centre.z<START_BOARD_z|| this.centre.z>START_BOARD_z+BOARD_LENGTH ){
-            temp.y=GROUND_START_y;
+        if (this.centre.x < START_BOARD_x || this.centre.x > START_BOARD_x + BOARD_WIDTH || this.centre.z < START_BOARD_z || this.centre.z > START_BOARD_z + BOARD_LENGTH) {
+            temp.y = GROUND_START_y;
         }
 
         let centre2D = project(temp, angley, anglex);
 
-        let radiusShadow = this.rad * (-this.centre.y) * shadowradiusfactor/(this.centre.z - 1 + START_ZPLANE);
-        if(this.centre.x<START_BOARD_x || this.centre.x>START_BOARD_x+BOARD_WIDTH || this.centre.z<START_BOARD_z|| this.centre.z>START_BOARD_z+BOARD_LENGTH ){
-            radiusShadow=this.rad * (-this.centre.y+GROUND_START_y) * 0.4*shadowradiusfactor/(this.centre.z - 1 + START_ZPLANE)
-            if(this.centre.z<START_BOARD_z+BOARD_LENGTH+0.8){
-                radiusShadow=0;
-            }
+        let radiusShadow = this.rad * (-this.centre.y) * shadowradiusfactor / (this.centre.z - 1 + START_ZPLANE);
+        if (this.centre.x < START_BOARD_x || this.centre.x > START_BOARD_x + BOARD_WIDTH || this.centre.z < START_BOARD_z || this.centre.z > START_BOARD_z + BOARD_LENGTH) {
+            radiusShadow = this.rad * (-this.centre.y + GROUND_START_y) * 0.4 * shadowradiusfactor / (this.centre.z - 1 + START_ZPLANE)
+            // if (this.centre.z < START_BOARD_z + BOARD_LENGTH + 0.8) {
+            //     radiusShadow = 0;
+            // }
         }
-
         if (radiusShadow < 0) {
             radiusShadow = 0
         }
@@ -129,12 +142,11 @@ class Ball {
     }
 
     //Detects collision between ball and table.
-collisionTable( ) {
+    collisionTable() {
 
         //collision detected if ball is with in "x range of table" and "z range of table" and "y value of ball is greater than y value of table when radius compensated"
         if (this.centre.x >= START_BOARD_x && this.centre.x < START_BOARD_x + BOARD_WIDTH && this.centre.z >= START_BOARD_z && this.centre.z < START_BOARD_z + BOARD_LENGTH) {
             if (START_BOARD_y - this.centre.y <= this.rad) {
-
 
                 //this is for determining which side up or down side ball collide to for updating score
                 //upside
@@ -146,7 +158,6 @@ collisionTable( ) {
                 if (this.centre.z < (START_BOARD_z + BOARD_LENGTH / 2)) {
                     this.downside_collision_flag++;
                     // this.upside_collision_flag = 0;
-
                 }
                 //after collision reverse velocity vector adding some loss
                 this.velocity.y = -Math.abs(this.velocity.y) + LOSS_TABLE;
@@ -158,87 +169,91 @@ collisionTable( ) {
         }
     }
 
-    collisionNet(ctx,a1,a2){
-        if(this.centre.x>=START_BOARD_x && this.centre.x<=(START_BOARD_x+BOARD_WIDTH)){
-            if(Math.abs(this.centre.z-(START_BOARD_z+(BOARD_LENGTH/2)))<=2.5*this.rad){
-                if(this.centre.y<=START_BOARD_y && (this.centre.y+this.rad)>=START_BOARD_y-NET_HEIGHT){
-                        this.velocity.z=-this.velocity.z*NET_COLLISION_LOSS
-
-
+    //detects collision with net
+    collisionNet() {
+        if (this.centre.x >= START_BOARD_x && this.centre.x <= (START_BOARD_x + BOARD_WIDTH)) {
+            if (Math.abs(this.centre.z - (START_BOARD_z + (BOARD_LENGTH / 2))) <= 2.5 * this.rad) {
+                if (this.centre.y <= START_BOARD_y && (this.centre.y + this.rad) >= START_BOARD_y - NET_HEIGHT) {
+                    this.velocity.y -= NET_COLLISION_Y_JUMP;
+                    if (this.centre.z > (START_BOARD_z + BOARD_LENGTH / 2)) {
+                        this.velocity.z = -(Math.abs(this.velocity.z) * NET_COLLISION_LOSS)
+                    }
+                    else {
+                        this.velocity.z = (Math.abs(this.velocity.z) * NET_COLLISION_LOSS)
+                    }
                 }
             }
         }
-
     }
 
 
-    //this function is used to testing. This bounds ball within table. Used to fine tuning collision response.
+    //this function is used to training mode. This bounds ball within table. Used to fine tuning collision response.
 
     dontGoOutside() {
         if (this.centre.z > START_BOARD_z + BOARD_LENGTH) {
             this.velocity.z = -Math.abs(this.velocity.z);
-            // this.velocity.z = -0.03;
             wallsound.play();
-
-            //add power by adding -LOSS
-            // this.velocity.y = STABLE_Y_VELOCITY;
         }
 
         if (this.centre.z < START_BOARD_z) {
             wallsound.play();
             this.velocity.z = Math.abs(this.velocity.z);
-            //add power by adding -LOSS
         }
 
         if (this.centre.x < START_BOARD_x) {
             this.velocity.x = Math.abs(this.velocity.x);
-            //add power by adding -LOSS
         }
 
         if (this.centre.x > START_BOARD_x + BOARD_WIDTH) {
             this.velocity.x = -Math.abs(this.velocity.x);
-            //add power by adding -LOSS
         }
     }
 
 
     //detects collision with world
     collisionWorld() {
+
+        //floor
         if (GROUND_START_y - this.centre.y <= this.rad) {
             this.velocity.y = -Math.abs(this.velocity.y) + LOSS_GROUND;
-            this.outOfBoard=1;
+            this.outOfBoard = 1;
             wallsound.play();
-            // this.respawn();
         }
-
+        //ceiling
         if ((GROUND_START_y - WALL_HEIGHT) > this.centre.y) {
             this.velocity.y = Math.abs(this.velocity.y);
-            this.outOfBoard=1;
+            this.outOfBoard = 1;
             wallsound.play();
-
-
         }
 
+        //far wall
         if ((GROUND_START_z + GROUND_LENGTH) <= this.centre.z) {
             this.velocity.z = -this.velocity.z;
-            this.outOfBoard=1;
+            this.outOfBoard = 1;
             wallsound.play();
         }
+        //behind wall
+        if ((GROUND_START_z - GROUND_LENGTH / 2) >= this.centre.z) {
+            this.velocity.z = -this.velocity.z;
+            this.outOfBoard = 1;
+            wallsound.play();
+        }
+
+        //right wall
         if ((GROUND_START_x + GROUND_WIDTH) <= this.centre.x) {
             this.velocity.x = -this.velocity.x;
-            this.outOfBoard=1;
+            this.outOfBoard = 1;
             wallsound.play();
-
-
         }
+        //left wall
         if ((GROUND_START_x) >= this.centre.x) {
             this.velocity.x = -this.velocity.x;
-            this.outOfBoard=1;
+            this.outOfBoard = 1;
             wallsound.play();
         }
     }
 
-    //ball respawn logic
+    //ball respawn logic. Used for not letting ball go beyound table height
     respawn() {
         if (this.centre.y > START_BOARD_y) {
             this.centre.y = 0;
@@ -272,7 +287,15 @@ collisionTable( ) {
 
     // Simulated collision between bat and ball with bat having increased thickness
 
-    collisionBat2(angley,angley2, bat, bat_far, near = true) {
+    /**
+     * 
+     * @param {*} angley angley of first canvas
+     * @param {*} angley2 angley of second canvas
+     * @param {*} bat first bat
+     * @param {*} bat_far second bat
+     * @param {bool} near It is flag telling whether first bat is near or far bat.
+     */
+    collisionBat2(angley, angley2, bat, bat_far, near = true) {
         let a = rotateY(this.centre, angley);
         let b = rotateY(bat.topLeft, angley);
         let c = rotateY(bat.topRight, angley);
@@ -282,44 +305,67 @@ collisionTable( ) {
             if (near == true) {
 
                 if (((b.z - a.z) >= 0) && ((b.z - a.z) < BAT_LENGTHINZAXIS_FOR_SHOT)) {
-                    let extendCollisionDelayForServer = this.serveflag;
+                    // let extendCollisionDelayForServer = this.serveflag;
                     if (soundflag == 1) {
                         //play sound
                         batsound.play();
                         soundflag = 0;
 
+                        let currentsum = this.upside_collision_flag + this.downside_collision_flag;
+
+                        // if(currentsum==this.previousCollisionSum && this.serveflag==0 && this.lastCollidedBat==2){
+                        //     console.log('up')
+                        //     bat_far.score++;
+                        //     this.startServe();
+                        //     // return 1;
+                        // }
+                        // else{
+                        //     console.log('upper swap')
+                        //     this.previousCollisionSum=currentsum;
+                        //     this.lastCollidedBat = 1;
+                        // }
+
                         //collision response
                         this.centre.y = SHOT_POSITION_Y;
                         this.velocity.y = STABLE_Y_VELOCITY;
 
-                        this.velocity.x=(Math.sin(angley)*Math.sin(angley)*-this.velocity.x+Math.cos(angley)*Math.cos(angley)*Math.abs(this.velocity.z)*(-angley/(Math.abs(angley)+1.1)))/4;
+                        this.velocity.x = (Math.sin(angley) * Math.sin(angley) * -this.velocity.x + Math.cos(angley) * Math.cos(angley) * Math.abs(this.velocity.z) * (-angley / (Math.abs(angley) + 1.1))) / 4;
                         this.velocity.x += RESPONSE_SCALE_X * bat.speedX;
 
                         this.velocity.z = Math.abs(this.velocity.z) * 0.8 - RESPONSE_SCALE_Z * bat.speedY - 0.001;
                         if (this.serveflag != 0) {
-                            this.velocity.z = 0.025 //this is good one
+                            this.velocity.z = 0.025 //this is good response for serve
                             this.serveflag = 0;
-
                         }
-                        this.lastCollidedBat=1;
                     }
                     //for rejecting multiple collision detection under limit
                     setTimeout(function () {
                         soundflag = 1;
 
-                    }, COLLISION_DETECTION_LIMIT  + extendCollisionDelayForServer * 100)
+                    }, COLLISION_DETECTION_LIMIT)
                 }
             }
             //upside bat
             else {
                 if (a.z <= b.z && (b.z - a.z) < BAT_LENGTHINZAXIS_FOR_SHOT) {
-                    if (soundflag == 1) {
+                    if (soundflag == 1 && this.freeze == 0) {
                         batsound2.play();
                         soundflag = 0;
+                        let currentsum = this.upside_collision_flag + this.downside_collision_flag;
+                        // if(currentsum==this.previousCollisionSum && this.serveflag==0 && this.lastCollidedBat==1){
+                        //     console.log('down')
+                        //     bat_far.score++;
+                        //     return true;
+                        // }
+                        // else {
+                        //     console.log('lower swap')
+                        //     this.previousCollisionSum=currentsum;
+                        //     this.lastCollidedBat = 2;
+                        // }
 
                         this.centre.y = SHOT_POSITION_Y
                         this.velocity.y = STABLE_Y_VELOCITY;
-                        this.velocity.x=(Math.sin(angley)*Math.sin(angley)*-this.velocity.x+Math.cos(angley)*Math.cos(angley)*Math.abs(this.velocity.z)*(-angley/(Math.abs(angley)+1.1)))/4;
+                        this.velocity.x = (Math.sin(angley) * Math.sin(angley) * -this.velocity.x + Math.cos(angley) * Math.cos(angley) * Math.abs(this.velocity.z) * (-angley / (Math.abs(angley) + 1.1))) / 4;
                         this.velocity.x += RESPONSE_SCALE_X * bat.speedX;
                         this.velocity.z = -Math.abs(this.velocity.z) - RESPONSE_SCALE_Z * bat.speedY;
                         if (this.serveflag != 0) {
@@ -328,9 +374,8 @@ collisionTable( ) {
                         }
                         else {
                             this.velocity.z = -0.07
-
                         }
-                        this.lastCollidedBat=2;
+
                     }
                     setTimeout(function () {
                         soundflag = 1;
@@ -338,8 +383,10 @@ collisionTable( ) {
                     }, COLLISION_DETECTION_LIMIT)
                 }
             }
+            return false;
         }
     }
+
     //reflects ball about midpoint of table. Used for multiplayer mode
     reflection() {
         //first translate world to allign such that point of reflection align with z plane
@@ -356,16 +403,17 @@ collisionTable( ) {
     }
 
 
+    //updates score 
     /**
- * 
- * @param {*} bat for updating score of player first
- * @param {*} bat_far for updating score of player second 
- */
-     updateScore2(bat, bat_far) {
-        if (freeze == 0) {
+     * 
+     * @param {*} bat for updating score of player first
+     * @param {*} bat_far for updating score of player second 
+     */
+    updateScore2(bat, bat_far) {
+        if (this.freeze == 0) {
             if (this.outOfBoard == 1) {
                 if (this.serverid == 1) {
-    
+
                     if (this.downside_collision_flag - this.upside_collision_flag == 0) {
                         bat.score++;
                         this.startServe();
@@ -385,9 +433,9 @@ collisionTable( ) {
                         this.startServe();
                     }
                 }
-    
+
             }
-    
+
             else if (this.serverid == 1) {
                 if (this.upside_collision_flag == 1 && this.downside_collision_flag == 0) {
                     //invalid serve
@@ -398,7 +446,7 @@ collisionTable( ) {
                     bat_far.score++;
                     this.startServe();
                 }
-    
+
                 else if (this.upside_collision_flag - this.downside_collision_flag >= 1) {
                     bat.score++;
                     this.startServe();
@@ -419,7 +467,7 @@ collisionTable( ) {
                     this.startServe();
                 }
             }
-    
+
         }
     }
 

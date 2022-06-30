@@ -1,18 +1,15 @@
 async function highscorepage() {
     let highscore_container = document.createElement('div');
 
-
     //show loading screen unless data is fetched from database.
     let loading = document.createElement('p')
     loading.innerHTML = "LOADING..."
     highscore_container.append(loading)
     document.body.append(highscore_container);
 
-
     let list = await bringHighscoreList();
     //when data loaded, empty highscore container
     highscore_container.innerHTML = ""
-
 
     //then add name and time of players from database one by one
     for (let i = 0; i < list.length; i++) {
@@ -27,9 +24,7 @@ async function highscorepage() {
         scorediv.append(timediv);
 
         highscore_container.append(scorediv);
-
     }
-
 
     //back button
     let back = new Backbutton(highscore_container, menu, 'back', 'relative');

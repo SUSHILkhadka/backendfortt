@@ -21,7 +21,7 @@ let batsound = new Audio('asset/bat.m4a');
 let wallsound = new Audio('asset/wallbounce.mp3');
 let batsound2 = new Audio('asset/balls.wav');
 let refreesound=new Audio('asset/refree.m4a');
-let soundflag=1
+soundflag=1
 
 let batimage=new Image();
 var imageObj2 = new Image();

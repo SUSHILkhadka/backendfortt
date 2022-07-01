@@ -288,7 +288,7 @@ function gameloop(gamemode = 1, training = 0) {
             batMirror.new(bat.topLeft, bat.topRight, bat.bottomLeft, bat.bottomRight)
             batMirror.reflection();
             if (ball.freeze == 0) {
-                ballMirror.collisionBat2(angy, angy2, bat_far, bat, false);
+                let flag=ballMirror.collisionBat2(angy, angy2, bat_far, bat, false);
                 ball.velocity = ballMirror.velocity;
                 ball.centre.y = ballMirror.centre.y
                 ball.serveflag = ballMirror.serveflag;
@@ -300,11 +300,12 @@ function gameloop(gamemode = 1, training = 0) {
                 ball.previousCollisionSum = ballMirror.previousCollisionSum;
                 ball.lastCollidedBat = ballMirror.lastCollidedBat;
 
-
+                if(flag==true){
+                    ball.startServe();
+                }
                 bat_far.updateAngle(angy2);
                 bat_far.updatePosition();
             }
-
             ctx2.clearRect(0, 0, canvas.width, canvas.height);
             //next bat draw
             if (gamemode == 2) {

@@ -94,19 +94,19 @@ class Ball {
     }
 
     startServe() {
+
         this.freeze = 1;
         refreesound.play();
-        setTimeout(function () {
+        let timeout = setTimeout(function () {
             this.serveflag = 1;
             this.upside_collision_flag = 0;
             this.downside_collision_flag = 0;
             this.outOfBoard = 0;
             this.previousCollisionSum = -1;
             this.freeze = 0;
+            clearTimeout(timeout);
         }.bind(this), 3000);
-
     }
-
 
     //draws ball as circle
     drawBall(ctx, angley, anglex) {
@@ -122,18 +122,16 @@ class Ball {
     //draws shadow as circle
     drawShadow(ctx, angley, anglex) {
         let temp = new Point3D(this.centre.x, START_BOARD_y, this.centre.z);
-        if (this.centre.x < START_BOARD_x || this.centre.x > START_BOARD_x + BOARD_WIDTH || this.centre.z < START_BOARD_z || this.centre.z > START_BOARD_z + BOARD_LENGTH) {
+        if ((this.centre.x+4*this.rad) < START_BOARD_x || (this.centre.x-4*this.rad) > START_BOARD_x + BOARD_WIDTH || (this.centre.z+4*this.rad) < START_BOARD_z || (this.centre.z-4*this.rad) > START_BOARD_z + BOARD_LENGTH) {
             temp.y = GROUND_START_y;
         }
 
         let centre2D = project(temp, angley, anglex);
 
         let radiusShadow = this.rad * (-this.centre.y) * shadowradiusfactor / (this.centre.z - 1 + START_ZPLANE);
-        if (this.centre.x < START_BOARD_x || this.centre.x > START_BOARD_x + BOARD_WIDTH || this.centre.z < START_BOARD_z || this.centre.z > START_BOARD_z + BOARD_LENGTH) {
+        if (this.centre.x < START_BOARD_x || this.centre.x > START_BOARD_x + BOARD_WIDTH || (this.centre.z) < START_BOARD_z || (this.centre.z) > START_BOARD_z + BOARD_LENGTH) {
             radiusShadow = this.rad * (-this.centre.y + GROUND_START_y) * 0.4 * shadowradiusfactor / (this.centre.z - 1 + START_ZPLANE)
-            // if (this.centre.z < START_BOARD_z + BOARD_LENGTH + 0.8) {
-            //     radiusShadow = 0;
-            // }
+
         }
         if (radiusShadow < 0) {
             radiusShadow = 0
@@ -305,25 +303,28 @@ class Ball {
             if (near == true) {
 
                 if (((b.z - a.z) >= 0) && ((b.z - a.z) < BAT_LENGTHINZAXIS_FOR_SHOT)) {
-                    // let extendCollisionDelayForServer = this.serveflag;
                     if (soundflag == 1) {
                         //play sound
                         batsound.play();
                         soundflag = 0;
 
-                        let currentsum = this.upside_collision_flag + this.downside_collision_flag;
+                        //for rejecting multiple collision detection under limit
+                        let secondtime = setTimeout(function () {
+                            soundflag = 1;
+                            clearTimeout(secondtime)
 
-                        // if(currentsum==this.previousCollisionSum && this.serveflag==0 && this.lastCollidedBat==2){
-                        //     console.log('up')
-                        //     bat_far.score++;
-                        //     this.startServe();
-                        //     // return 1;
-                        // }
-                        // else{
-                        //     console.log('upper swap')
-                        //     this.previousCollisionSum=currentsum;
-                        //     this.lastCollidedBat = 1;
-                        // }
+                        }, COLLISION_DETECTION_LIMIT + this.serveflag*extendCollisionDelayForServer)
+
+                        let currentsum = this.upside_collision_flag + this.downside_collision_flag;
+                        if (currentsum == this.previousCollisionSum && this.serveflag == 0 && this.lastCollidedBat == 2) {
+                            bat_far.score++;
+                            this.startServe();
+                            return true;
+                        }
+                        else {
+                            this.previousCollisionSum = currentsum;
+                            this.lastCollidedBat = 1;
+                        }
 
                         //collision response
                         this.centre.y = SHOT_POSITION_Y;
@@ -337,12 +338,10 @@ class Ball {
                             this.velocity.z = 0.025 //this is good response for serve
                             this.serveflag = 0;
                         }
-                    }
-                    //for rejecting multiple collision detection under limit
-                    setTimeout(function () {
-                        soundflag = 1;
 
-                    }, COLLISION_DETECTION_LIMIT)
+
+                    }
+
                 }
             }
             //upside bat
@@ -350,19 +349,25 @@ class Ball {
                 if (a.z <= b.z && (b.z - a.z) < BAT_LENGTHINZAXIS_FOR_SHOT) {
                     if (soundflag == 1 && this.freeze == 0) {
                         batsound2.play();
-                        soundflag = 0;
-                        let currentsum = this.upside_collision_flag + this.downside_collision_flag;
-                        // if(currentsum==this.previousCollisionSum && this.serveflag==0 && this.lastCollidedBat==1){
-                        //     console.log('down')
-                        //     bat_far.score++;
-                        //     return true;
-                        // }
-                        // else {
-                        //     console.log('lower swap')
-                        //     this.previousCollisionSum=currentsum;
-                        //     this.lastCollidedBat = 2;
-                        // }
 
+                        soundflag = 0;
+
+                        let secondtime = setTimeout(function () {
+                            soundflag = 1;
+                            clearTimeout(secondtime)
+
+
+                        }, COLLISION_DETECTION_LIMIT+this.serveflag*extendCollisionDelayForServer)
+
+                        let currentsum = this.upside_collision_flag + this.downside_collision_flag;
+                        if (currentsum == this.previousCollisionSum && this.serveflag == 0 && this.lastCollidedBat == 1) {
+                            bat_far.score++;
+                            return true;
+                        }
+                        else {
+                            this.previousCollisionSum = currentsum;
+                        }
+                        this.lastCollidedBat = 2;
                         this.centre.y = SHOT_POSITION_Y
                         this.velocity.y = STABLE_Y_VELOCITY;
                         this.velocity.x = (Math.sin(angley) * Math.sin(angley) * -this.velocity.x + Math.cos(angley) * Math.cos(angley) * Math.abs(this.velocity.z) * (-angley / (Math.abs(angley) + 1.1))) / 4;
@@ -376,14 +381,12 @@ class Ball {
                             this.velocity.z = -0.07
                         }
 
-                    }
-                    setTimeout(function () {
-                        soundflag = 1;
 
-                    }, COLLISION_DETECTION_LIMIT)
+
+                    }
+
                 }
             }
-            return false;
         }
     }
 
